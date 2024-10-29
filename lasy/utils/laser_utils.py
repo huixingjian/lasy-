@@ -981,6 +981,8 @@ def get_STC(dim, grid, k0):
     # Calculate group-delayed dispersion
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
     # Use the normalised laser intensity to calculate the weighted average of Phi2
+    phi2 = np.roots([4 * pphi_pt2, -4, tau**4 *pphi_pt2])
+    print(phi2.shape)
     STC_fac["Phi2"] = np.average(pphi_pt2, weights=env_abs)
     STC_fac["phi2"] = np.max(
         np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
@@ -1007,6 +1009,7 @@ def get_STC(dim, grid, k0):
         weight_y = np.mean(env_spec, axis=1)
         zeta_x = np.average(derivative_x.T, weights=weight_x)
         zeta_y = np.average(derivative_y.T, weights=weight_y)
+        print(derivative_x.shape)
         STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
         STC_fac["nu"] = (
@@ -1017,7 +1020,6 @@ def get_STC(dim, grid, k0):
         z_centroids = np.sum(grid.axes[2] * env_abs, axis=2) / np.sum(env_abs, axis=2)
         derivative_x = (np.gradient(z_centroids, axis=0) / grid.dx[0])
         derivative_y = (np.gradient(z_centroids, axis=1) / grid.dx[1])
-
         pft_x = np.average(derivative_x, weights=weight)
         pft_y = np.average(derivative_y, weights=weight)
         STC_fac["pft"] = np.sqrt((pft_x**2 + pft_y**2))
