@@ -897,7 +897,6 @@ def get_w0(grid, dim):
     ----------
     sigma: Standard deviation of a**2 in m
     """
-    Calculate the laser waist
     field = grid.get_temporal_field()
     if dim == "xyt":
         Nx, Ny, Nt = field.shape
