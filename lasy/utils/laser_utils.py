@@ -936,7 +936,7 @@ def get_STC(dim, grid, tau, w0, k0):
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     # Calculate group-delayed dispersion
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
-    # Use the laser intensity to calculate the weighted average of Phi2
+    # Use the normalised laser intensity to calculate the weighted average of Phi2
     STC_fac["Phi2"] = np.average(pphi_pt2, weights=env_abs)
     STC_fac["phi2"] = np.max(
         np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
@@ -944,6 +944,7 @@ def get_STC(dim, grid, tau, w0, k0):
     # Calculate spatio- and angular dispersion
     if dim == "rt":
         pphi_ptpr = (np.diff(pphi_pt, axis=1)) / grid.dx[0]
+        # Use the normalised laser intensity to calculate the weighted average of nu
         STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
         # Transfer the unit from nu to zeta
         STC_fac["zeta"] = np.min(
@@ -955,6 +956,7 @@ def get_STC(dim, grid, tau, w0, k0):
         pphi_ptpx = np.gradient(pphi_pt, grid.dx[0], axis=0)
         # Calculate the STC angle in XOY for spatio coupling
         theta = np.arctan2(pphi_ptpy, pphi_ptpx)
+        # Use the normalised laser intensity to calculate the weighted average of theta
         STC_fac["stc_theta_zeta"] = np.average(theta, weights=env_abs)
         pphi_ptpr = np.sqrt(pphi_ptpy**2 + pphi_ptpx**2)
         STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
@@ -962,6 +964,7 @@ def get_STC(dim, grid, tau, w0, k0):
             np.roots([4 * STC_fac["nu"], -4, STC_fac["nu"] * w0**2 * tau**2])
         )
         # calculate angular dispersion and pulse front tilt
+        # Use the normalised laser intensity to calculate the weighted average of PFT
         z_centroids = np.average(grid.axes[2], weights=env_abs, axis=2)
         derivative_x = np.gradient(z_centroids, axis=0) / grid.dx[0]
         derivative_y = np.gradient(z_centroids, axis=1) / grid.dx[1]
