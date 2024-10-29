@@ -981,8 +981,6 @@ def get_STC(dim, grid, k0):
     # Calculate group-delayed dispersion
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
     # Use the normalised laser intensity to calculate the weighted average of Phi2
-    phi2 = np.roots([4 * pphi_pt2, -4, tau**4 *pphi_pt2])
-    print(phi2.shape)
     STC_fac["Phi2"] = np.average(pphi_pt2, weights=env_abs)
     STC_fac["phi2"] = np.max(
         np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
@@ -1010,6 +1008,18 @@ def get_STC(dim, grid, k0):
         zeta_x = np.average(derivative_x.T, weights=weight_x)
         zeta_y = np.average(derivative_y.T, weights=weight_y)
         print(derivative_x.shape)
+        # Get the shape of pphi_pt2
+        shape = pphi_pt2.shape
+        phi2 = np.empty(shape, dtype=object)  # Create an array to store roots
+
+        # Loop through each element in pphi_pt2
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                for k in range(shape[2]):
+            # Calculate roots for each element
+                    coeffs = [4 * pphi_pt2[i, j, k], -4, tau**4 * pphi_pt2[i, j, k]]
+                    phi2[i, j, k] = np.roots(coeffs)
+        print(phi2.shape)
         STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
         STC_fac["nu"] = (
