@@ -962,12 +962,7 @@ def get_STC(dim, grid, tau, w0, k0):
         pphi_ptpx = np.gradient(pphi_pt, grid.dx[0], axis=0)
         # Calculate the STC angle in XOY for spatio coupling
         theta = np.arctan2(pphi_ptpy, pphi_ptpx)
-        STC_fac["stc_theta_zeta"] = np.sum(
-            theta
-            * env_abs[
-                : env_abs.shape[0] - 1, : env_abs.shape[1] - 1, : env_abs.shape[2] - 1
-            ]
-        ) / np.sum( env_abs )
+        STC_fac["stc_theta_zeta"] = np.sum(theta * env_abs ) / np.sum( env_abs )
         pphi_ptpr = np.sqrt(pphi_ptpy** 2 + pphi_ptpx**2)
         STC_fac["nu"] = np.sum( pphi_ptpr* env_abs) / np.sum(env_abs)
         STC_fac["zeta"] = np.min(
