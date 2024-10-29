@@ -972,9 +972,8 @@ def get_STC(dim, grid, k0):
     env_abs = np.abs(env**2)
     env_spec = np.abs(grid.get_spectral_field())
     # Get the spectral axis
-    dt = grid.dx[time_axis_indx]
-    Nt = grid.shape[time_axis_indx]
-
+    dt = grid.dx[-1]
+    Nt = grid.shape[-1]
     omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0 * c
 
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
