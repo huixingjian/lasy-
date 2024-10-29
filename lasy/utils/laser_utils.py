@@ -874,6 +874,7 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
         field *= np.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)
 
+
 def get_w0(grid, dim):
     # Calculate the laser waist
     field = grid.get_temporal_field()
@@ -894,6 +895,7 @@ def get_w0(grid, dim):
     sigma = 2 * np.sqrt(np.average(ax**2, weights=A2))
 
     return sigma
+
 
 def get_STC(dim, grid, k0):
     r"""
