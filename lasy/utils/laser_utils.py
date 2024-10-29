@@ -1018,8 +1018,9 @@ def get_STC(dim, grid, k0):
         # Use the normalised laser intensity to calculate the weighted average of PFT
         weight = np.mean(env_abs, axis=2)
         z_centroids = np.sum(grid.axes[2] * env_abs, axis=2) / np.sum(env_abs, axis=2)
-        derivative_x = (np.gradient(z_centroids, axis=0) / grid.dx[0])
-        derivative_y = (np.gradient(z_centroids, axis=1) / grid.dx[1])
+        derivative_x = np.gradient(z_centroids, axis=0) / grid.dx[0]
+        derivative_y = np.gradient(z_centroids, axis=1) / grid.dx[1]
+        print(derivative_x.shape)
         pft_x = np.average(derivative_x, weights=weight)
         pft_y = np.average(derivative_y, weights=weight)
         STC_fac["pft"] = np.sqrt((pft_x**2 + pft_y**2))
