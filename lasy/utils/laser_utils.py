@@ -942,9 +942,9 @@ def get_STC(dim, grid, tau, w0, k0):
     # STC_fac["Phi2"] = np.sum(pphi_pt2 * env_abs[:, :, : env_abs.shape[2] - 2]) / np.sum(
     #    env_abs[:, :, : env_abs.shape[2] - 2]
     # )
-    # STC_fac["phi2"] = np.max(
-    #    np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
-    # )
+    STC_fac["phi2"] = np.max(
+        np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
+    )
     # Calculate spatio- and angular dispersion
     if dim == "rt":
         pphi_ptpr = (np.diff(pphi_pt, axis=1)) / grid.dx[0]
