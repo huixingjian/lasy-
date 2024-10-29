@@ -984,7 +984,9 @@ def get_STC(dim, grid, k0):
         # calculate angular dispersion and pulse front tilt
         # Use the normalised laser intensity to calculate the weighted average of PFT
         weight = np.mean(env_abs, axis=2)
-        z_centroids = np.average(grid.axes[2], weights=weight, axis=2)
+        print(len(grid.axes[2]))
+        print(len(env_abs[2]))
+        z_centroids = np.average(grid.axes[2], weights=env_abs, axis=2)
         derivative_x = np.gradient(z_centroids, axis=0) / grid.dx[0]
         derivative_y = np.gradient(z_centroids, axis=1) / grid.dx[1]
         pft_x = np.average(derivative_x, weights=weight)
