@@ -1043,7 +1043,7 @@ def get_STC(dim, grid, k0):
         STC_fac["pft"] = np.sqrt((pft_x**2 + pft_y**2))
         STC_fac["stc_theta_beta"] = np.arctan2(pft_y, pft_x)
         STC_fac["beta"] = (
-            np.sqrt((pft_x**2 + pft_y**2)) - STC_fac["Phi2"] * STC_fac["nu"]
+            np.sqrt((pft_x**2 + pft_y**2)) - STC_fac["phi2"] * STC_fac["nu"]
         ) / k0
 
     return STC_fac
