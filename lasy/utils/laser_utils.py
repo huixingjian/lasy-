@@ -933,9 +933,10 @@ def get_STC(dim, grid, tau, w0, k0):
     env = grid.get_temporal_field()
     env_abs = np.abs(env)
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
-    pphi_pt = (np.diff(phi_envelop, axis=2)) / (grid.dx[-1])
-    # Calculate goup-delayed dispersion
-    pphi_pt2 = (np.diff(pphi_pt, axis=2)) / (grid.dx[-1])
+    pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
+# Calculate group-delayed dispersion
+    pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
+
     STC_fac["Phi2"] = np.sum(pphi_pt2 * env_abs[:, :, : env_abs.shape[2] - 2]) / np.sum(
         env_abs[:, :, : env_abs.shape[2] - 2]
     )
@@ -955,8 +956,8 @@ def get_STC(dim, grid, tau, w0, k0):
         )
         # No angular dispersion in 2D and the direction of spatio-chirp is certain
     if dim == "xyt":
-        pphi_ptpy = (np.diff(pphi_pt, axis=1)) / grid.dx[1]
-        pphi_ptpx = (np.diff(pphi_pt, axis=0)) / grid.dx[0]
+        pphi_ptpy = np.gradient(pphi_pt, grid.dx[1], axis=1)
+        pphi_ptpx = np.gradient(pphi_pt, grid.dx[0], axis=0)
         # Calculate the STC angle in XOY for spatio coupling
         theta = np.arctan2(
             pphi_ptpy[: env_abs.shape[0] - 1, : env_abs.shape[1] - 1, :],
