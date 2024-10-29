@@ -974,7 +974,9 @@ def get_STC(dim, grid, k0):
     # Get the spectral axis
     dt = grid.dx[time_axis_indx]
     Nt = grid.shape[time_axis_indx]
-    omega= 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0*c
+
+    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0 * c
+
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     # Calculate group-delayed dispersion
@@ -986,10 +988,12 @@ def get_STC(dim, grid, k0):
     )
     # Calculate spatio- and angular dispersion
     if dim == "rt":
-        rda=np.sum(grid.axes[0]*env_spec[0,:,:].T,axis=1)/np.sum(env_spec,axis=1)
-        derivative_r = np.gradient(rda[0,:],omega, axis=0)
-        weight=np.mean(env_spec,axis=1)
-        STC_fac["zeta"] = -3*np.average(derivative_r, weights=weight[0])
+        rda = np.sum(grid.axes[0] * env_spec[0, :, :].T, axis=1) / np.sum(
+            env_spec, axis=1
+        )
+        derivative_r = np.gradient(rda[0, :], omega, axis=0)
+        weight = np.mean(env_spec, axis=1)
+        STC_fac["zeta"] = -3 * np.average(derivative_r, weights=weight[0])
         STC_fac["nu"] = (
             4 * STC_fac["zeta"] / (w0**2 * tau**2 + 4 * STC_fac["zeta"] ** 2)
         )
