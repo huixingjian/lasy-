@@ -1013,12 +1013,13 @@ def get_STC(dim, grid, k0):
         a =np.mean(weight_x, axis = 1)
         b  =np.mean(weight_x, axis = 0)
         cc  =np.mean(weight_x, axis = 2)
+
         print(a.shape)
         print(b.shape)
         print(cc.shape)
         print(derivative_x.shape)
-        zeta_x = np.average(derivative_x, weights=np.mean(weight_x, axis = 1))
-        zeta_y = np.average(derivative_y, weights=np.mean(weight_y,axis=0))
+        zeta_x = np.average(derivative_x, weights=np.mean(weight_x, axis=1))
+        zeta_y = np.average(derivative_y, weights=np.mean(weight_y, axis=0))
 
         STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
