@@ -1002,9 +1002,10 @@ def get_STC(dim, grid, k0):
         a = grid.axes[0] * weight_x
         print(a.shape)
 
-        x_centroids = np.sum(grid.axes[0] * weight_x, axis=2) / np.sum(weight_x, axis=2)
+        x_centroids = np.sum(grid.axes[0] * weight_x, axis=0) / np.sum(weight_x, axis=0)
 
-        y_centroids = np.sum(grid.axes[1] * weight_y, axis=0) / np.sum(weight_y, axis=0)
+        y_centroids = np.sum(grid.axes[1] * weight_y, axis=1) / np.sum(weight_y, axis=1)
+        print(y_centroids.shape)
         print(y_centroids.shape)
         derivative_x = np.gradient(x_centroids, omega, axis=2)
         derivative_y = np.gradient(y_centroids, omega, axis=2)
