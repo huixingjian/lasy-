@@ -874,8 +874,28 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
         field *= np.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)
 
+def get_w0(grid, dim):
+    # Calculate the laser waist
+    field = grid.get_temporal_field()
+    if dim == "xyt":
+        Nx, Ny, Nt = field.shape
+        A2 = (np.abs(field[Nx // 2 - 1, :, :]) ** 2).sum(-1)
+        ax = grid.axes[1]
+    else:
+        A2 = (np.abs(field[0, :, :]) ** 2).sum(-1)
+        ax = grid.axes[0]
+        if ax[0] > 0:
+            A2 = np.r_[A2[::-1], A2]
+            ax = np.r_[-ax[::-1], ax]
+        else:
+            A2 = np.r_[A2[::-1][:-1], A2]
+            ax = np.r_[-ax[::-1][:-1], ax]
 
-def get_STC(dim, grid, tau, w0, k0):
+    sigma = 2 * np.sqrt(np.average(ax**2, weights=A2))
+
+    return sigma
+
+def get_STC(dim, grid, k0):
     r"""
     Calculate the spatio-temporal coupling factors of the laser.
 
@@ -892,12 +912,6 @@ def get_STC(dim, grid, tau, w0, k0):
         It contains an ndarray (V/m) with
         the value of the envelope field and the associated metadata
         that defines the points at which the laser is defined.
-
-    tau : scalar
-        Duration of the laser pulse in s.
-
-    w0 : scalar
-        Waist of laser in m.
 
     k0 : scalar
         Wavenumber of the field
@@ -920,6 +934,8 @@ def get_STC(dim, grid, tau, w0, k0):
     `S. Akturk et al., Optics Express 12, 4399 (2004) <https://doi.org/10.1364/OPEX.12.004399>`__.
     """
     # Initialise the returned dictionary
+    tau = get_duration(grid, dim)
+    w0 = get_w0(grid, dim)
     STC_fac = {
         "Phi2": 0,
         "phi2": 0,
