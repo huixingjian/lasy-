@@ -114,6 +114,7 @@ class Laser:
         dt = self.grid.dx[time_axis_indx]
         Nt = self.grid.shape[time_axis_indx]
         self.omega_1d = 2 * np.pi * np.fft.fftfreq(Nt, dt) + profile.omega0
+        
         # Create the grid on which to evaluate the laser, evaluate it
         if self.dim == "xyt":
             x, y, t = np.meshgrid(*self.grid.axes, indexing="ij")
