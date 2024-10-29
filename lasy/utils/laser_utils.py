@@ -999,8 +999,9 @@ def get_STC(dim, grid, k0):
     if dim == "xyt":
         weight_x =np.transpose(env_spec, (1,2,0))
         weight_y =np.transpose(env_spec, (2,0,1))
-        x_centroids = np.sum(grid.axes[0] * weight_x, axis=0) / np.sum(weight_x, axis=0)
-        y_centroids = np.sum(grid.axes[1] * weight_y, axis=1) / np.sum(weight_y, axis=1)
+        x_centroids = np.sum(grid.axes[0] * weight_x, axis=1) / np.sum(weight_x, axis=1)
+        y_centroids = np.sum(grid.axes[1] * weight_y, axis=0) / np.sum(weight_y, axis=0)
+        print(len(x_centroids))
         derivative_x = np.gradient(x_centroids, omega, axis=0)
         derivative_y = np.gradient(y_centroids, omega, axis=1)
         theta = np.arctan2(derivative_y, derivative_x)
