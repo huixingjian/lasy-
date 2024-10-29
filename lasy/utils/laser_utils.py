@@ -876,7 +876,21 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
 
 
 def get_w0(grid, dim):
-    # Calculate the laser waist
+    r"""
+    Calculate the laser waist
+    Parameters
+    ----------
+    dim : string
+        Dimensionality of the array. Options are:
+        - 'xyt': The laser pulse is represented on a 3D grid:
+                 Cartesian (x,y) transversely, and temporal (t) longitudinally.
+        - 'rt' : The laser pulse is represented on a 2D grid:
+                 Cylindrical (r) transversely, and temporal (t) longitudinally.
+    Return
+    ----------
+    sigma: Standard deviation of a**2 in m
+    """
+    Calculate the laser waist
     field = grid.get_temporal_field()
     if dim == "xyt":
         Nx, Ny, Nt = field.shape
