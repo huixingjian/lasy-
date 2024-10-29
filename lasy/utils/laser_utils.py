@@ -971,7 +971,7 @@ def get_STC(dim, grid, k0):
     env = grid.get_temporal_field()
     env_abs = np.abs(env**2)
     env_spec = np.abs(grid.get_spectral_field())
-    print(env_abs.shape)
+    print(len(env_abs))
     print(env_spec.shape)
     omega = 2 * np.pi * np.fft.fftfreq(len(grid.axes[-1]), grid.dx[-1] / c) + k0 * c
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
@@ -997,8 +997,10 @@ def get_STC(dim, grid, k0):
         # )
         # No angular dispersion in 2D and the direction of spatio-chirp is certain
     if dim == "xyt":
-        x_centroids = np.sum(grid.axes[0] * env_spec, axis=0) / np.sum(env_spec, axis=0)
-        y_centroids = np.sum(grid.axes[1] * env_spec, axis=1) / np.sum(env_spec, axis=1)
+        weight_x =np.transpose(env_spec, (1,2,0))
+        weight_y =np.transpose(env_spec, (2,0,1))
+        x_centroids = np.sum(grid.axes[0] * weight_x, axis=0) / np.sum(weight_x, axis=0)
+        y_centroids = np.sum(grid.axes[1] * weight_y, axis=1) / np.sum(weight_y, axis=1)
         derivative_x = np.gradient(x_centroids, omega, axis=0)
         derivative_y = np.gradient(y_centroids, omega, axis=1)
         theta = np.arctan2(derivative_y, derivative_x)
