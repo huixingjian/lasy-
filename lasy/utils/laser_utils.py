@@ -958,8 +958,6 @@ def get_STC(dim, grid, k0):
     # Initialise the returned dictionary
     tau = 2 * get_duration(grid, dim)
     w0 = get_w0(grid, dim)
-    print(env_abs.shape)
-    print(env_spec.shape)
     STC_fac = {
         "Phi2": 0,
         "phi2": 0,
@@ -973,6 +971,8 @@ def get_STC(dim, grid, k0):
     env = grid.get_temporal_field()
     env_abs = np.abs(env**2)
     env_spec = np.abs(grid.get_spectral_field())
+    print(env_abs.shape)
+    print(env_spec.shape)
     omega = 2 * np.pi * np.fft.fftfreq(len(grid.axes[-1]), grid.dx[-1] / c) + k0 * c
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
