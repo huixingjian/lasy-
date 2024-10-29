@@ -931,18 +931,20 @@ def get_STC(dim, grid, tau, w0, k0):
         "stc_theta_beta": 0,
     }
     env = grid.get_temporal_field()
-    env_abs = np.abs(env)
+    env_abs = np.abs(env**2)
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
-# Calculate group-delayed dispersion
+    # Calculate group-delayed dispersion
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
+    # Use the laser intensity to calculate the weighted average of Phi2
+    STC_fac["Phi2"] = np.average(pphi_pt2, weights=env_abs)
 
-    STC_fac["Phi2"] = np.sum(pphi_pt2 * env_abs[:, :, : env_abs.shape[2] - 2]) / np.sum(
-        env_abs[:, :, : env_abs.shape[2] - 2]
-    )
-    STC_fac["phi2"] = np.max(
-        np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
-    )
+    #STC_fac["Phi2"] = np.sum(pphi_pt2 * env_abs[:, :, : env_abs.shape[2] - 2]) / np.sum(
+    #    env_abs[:, :, : env_abs.shape[2] - 2]
+    #)
+    #STC_fac["phi2"] = np.max(
+    #    np.roots([4 * STC_fac["Phi2"], -4, tau**4 * STC_fac["Phi2"]])
+    #)
     # Calculate spatio- and angular dispersion
     if dim == "rt":
         pphi_ptpr = (np.diff(pphi_pt, axis=1)) / grid.dx[0]
