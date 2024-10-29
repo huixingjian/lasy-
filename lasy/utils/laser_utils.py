@@ -936,7 +936,7 @@ def get_STC(dim, grid, k0):
     `S. Akturk et al., Optics Express 12, 4399 (2004) <https://doi.org/10.1364/OPEX.12.004399>`__.
     """
     # Initialise the returned dictionary
-    tau = get_duration(grid, dim)
+    tau = 2 * get_duration(grid, dim)
     w0 = get_w0(grid, dim)
     print(tau)
     print(w0)
@@ -987,9 +987,7 @@ def get_STC(dim, grid, k0):
         # calculate angular dispersion and pulse front tilt
         # Use the normalised laser intensity to calculate the weighted average of PFT
         weight = np.mean(env_abs, axis=2)
-        np.average(grid.axes[2], weights=env_abs, axis=2)
         z_centroids = np.sum(grid.axes[2] * env_abs, axis=2) / np.sum(env_abs, axis=2)
-        eight = np.mean(env_abs**2, axis=2)
         derivative_x = np.gradient(z_centroids, axis=0) / grid.dx[0]
         derivative_y = np.gradient(z_centroids, axis=1) / grid.dx[1]
         pft_x = np.average(derivative_x, weights=weight)
