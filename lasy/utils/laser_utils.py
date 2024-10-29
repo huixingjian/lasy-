@@ -958,8 +958,8 @@ def get_STC(dim, grid, k0):
     # Initialise the returned dictionary
     tau = 2 * get_duration(grid, dim)
     w0 = get_w0(grid, dim)
-    print(tau)
-    print(w0)
+    print(env_abs.shape)
+    print(env_spec.shape)
     STC_fac = {
         "Phi2": 0,
         "phi2": 0,
