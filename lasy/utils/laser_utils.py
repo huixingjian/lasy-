@@ -1012,7 +1012,7 @@ def get_STC(dim, grid, k0):
 
         a =np.mean(weight_x, axis = 1)
         b  =np.mean(weight_x, axis = 0)
-        2  =np.mean(weight_x, axis = 2)
+        c  =np.mean(weight_x, axis = 2)
         print(a.shape)
         print(b.shape)
         print(c.shape)
