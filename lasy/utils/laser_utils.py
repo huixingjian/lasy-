@@ -974,7 +974,7 @@ def get_STC(dim, grid, k0):
     # Get the spectral axis
     dt = grid.dx[time_axis_indx]
     Nt = grid.shape[time_axis_indx]
-    omega_= 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0*c
+    omega= 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0*c
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     # Calculate group-delayed dispersion
@@ -1002,30 +1002,16 @@ def get_STC(dim, grid, k0):
         # )
         # No angular dispersion in 2D and the direction of spatio-chirp is certain
     if dim == "xyt":
-        weight_x = np.transpose(env_spec, (1, 2, 0))
-        weight_y = np.transpose(env_spec, (2, 0, 1))
-        a = grid.axes[0] * weight_x
-        print(a.shape)
-
-        x_centroids = np.sum(grid.axes[0] * weight_x, axis=2) / np.sum(weight_x, axis=2)
-
-        y_centroids = np.sum(grid.axes[1] * weight_y, axis=2) / np.sum(weight_y, axis=2)
-
-        derivative_x = np.gradient(x_centroids, omega, axis=1)
-        derivative_y = np.gradient(y_centroids, omega, axis=0)
-        print(derivative_x.shape)
-
-        a = np.mean(weight_y, axis=1)
-        b = np.mean(weight_y, axis=0)
-        cc = np.mean(weight_y, axis=2)
-
-        print(a.shape)
-        print(b.shape)
-        print(cc.shape)
-        print(derivative_y.shape)
-        zeta_x = np.average(derivative_x, weights=np.mean(weight_x, axis=2))
-        zeta_y = np.average(derivative_y, weights=np.mean(weight_y, axis=2))
-
+        weight_x = np.transpose(env_spec, (2,1, 0))
+        weight_y = np.transpose(env_spec, (2,0, 1))
+        xda=np.sum(grid.axes[0]*weight_x,axis=2)/np.sum(weight_x,axis=2)
+        yda=np.sum(grid.axes[1]*weight_y,axis=2)/np.sum(weight_y,axis=2)
+        derivative_x = np.gradient(xda,omega, axis=0)
+        derivative_y = np.gradient(yda,omega, axis=0)
+        weight_x=np.mean(env_spec,axis=0)
+        weight_y=np.mean(env_spec,axis=1)
+        zeta_x=np.average(derivative_x.T, weights=weight_x)
+        zeta_y=np.average(derivative_y.T, weights=weight_y)
         STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
         STC_fac["nu"] = (
