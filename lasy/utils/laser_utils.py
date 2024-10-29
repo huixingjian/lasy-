@@ -934,7 +934,7 @@ def get_STC(dim, grid, tau, w0, k0):
     env_abs = np.abs(env)
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
-# Calculate group-delayed dispersion
+    # Calculate group-delayed dispersion
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
 
     STC_fac["Phi2"] = np.sum(pphi_pt2 * env_abs[:, :, : env_abs.shape[2] - 2]) / np.sum(
