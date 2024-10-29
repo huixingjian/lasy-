@@ -973,7 +973,7 @@ def get_STC(dim, grid, k0):
     env = grid.get_temporal_field()
     env_abs = np.abs(env**2)
     env_spec = np.abs(grid.get_spectral_field())
-    omega = 2 * np.pi * np.fft.fftfreq(len(grid.dx[-1]), grid.dx[-1] / c) + k0 * c
+    omega = 2 * np.pi * np.fft.fftfreq(len(grid.axes[-1]), grid.dx[-1] / c) + k0 * c
     phi_envelop = np.unwrap(np.array(np.arctan2(env.imag, env.real)), axis=2)
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     # Calculate group-delayed dispersion
