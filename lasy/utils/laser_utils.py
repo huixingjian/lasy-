@@ -977,7 +977,7 @@ def get_STC(dim, grid, k0):
         # Use the normalised laser intensity to calculate the weighted average of theta
         STC_fac["stc_theta_zeta"] = np.average(theta, weights=env_abs)
         pphi_ptpr = np.sqrt(pphi_ptpy**2 + pphi_ptpx**2)
-        #STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
+        # STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
         STC_fac["nu"] = np.sum(pphi_ptpr * env_abs) / np.sum(env_abs)
         STC_fac["zeta"] = np.min(
             np.roots([4 * STC_fac["nu"], -4, STC_fac["nu"] * w0**2 * tau**2])
