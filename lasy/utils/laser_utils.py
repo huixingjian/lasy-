@@ -997,8 +997,8 @@ def get_STC(dim, grid, k0):
         # )
         # No angular dispersion in 2D and the direction of spatio-chirp is certain
     if dim == "xyt":
-        weight_x =np.transpose(env_spec, (1,2,0))
-        weight_y =np.transpose(env_spec, (2,0,1))
+        weight_x = np.transpose(env_spec, (1, 2, 0))
+        weight_y = np.transpose(env_spec, (2, 0, 1))
         a = grid.axes[0] * weight_x
         print(a.shape)
 
