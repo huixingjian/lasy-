@@ -1010,9 +1010,11 @@ def get_STC(dim, grid, k0):
         derivative_y = np.gradient(y_centroids, omega, axis=0)
         print(derivative_x.shape)
 
+
         a =np.mean(weight_y, axis = 1)
         b  =np.mean(weight_y, axis = 0)
         cc  =np.mean(weight_y, axis = 2)
+
 
         print(a.shape)
         print(b.shape)
