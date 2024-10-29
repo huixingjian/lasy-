@@ -996,14 +996,6 @@ def get_STC(dim, grid, k0):
         STC_fac["nu"] = (
             4 * STC_fac["zeta"] / (w0**2 * tau**2 + 4 * STC_fac["zeta"] ** 2)
         )
-        # pphi_ptpr = (np.diff(pphi_pt, axis=1)) / grid.dx[0]
-        # Use the normalised laser intensity to calculate the weighted average of nu
-        # STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
-        # Transfer the unit from nu to zeta
-        # STC_fac["zeta"] = np.min(
-        #    np.roots([4 * STC_fac["nu"], -4, STC_fac["nu"] * w0**2 * tau**2])
-        # )
-        # No angular dispersion in 2D and the direction of spatio-chirp is certain
     if dim == "xyt":
         weight_x = np.transpose(env_spec, (2, 1, 0))
         weight_y = np.transpose(env_spec, (2, 0, 1))
@@ -1020,30 +1012,18 @@ def get_STC(dim, grid, k0):
         STC_fac["nu"] = (
             4 * STC_fac["zeta"] / (w0**2 * tau**2 + 4 * STC_fac["zeta"] ** 2)
         )
-        # pphi_ptpy = np.gradient(pphi_pt, grid.dx[1], axis=1)
-        # pphi_ptpx = np.gradient(pphi_pt, grid.dx[0], axis=0)
-        # Calculate the STC angle in XOY for spatio coupling
-        # theta = np.arctan2(pphi_ptpy, pphi_ptpx)
-        # Use the normalised laser intensity to calculate the weighted average of theta
-        # STC_fac["stc_theta_zeta"] = np.average(theta, weights=env_spec)
-        # pphi_ptpr = np.sqrt(pphi_ptpy**2 + pphi_ptpx**2)
-        # STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
-        # STC_fac["nu"] = np.sum(pphi_ptpr * env_abs) / np.sum(env_abs)
-        # STC_fac["zeta"] = np.min(
-        #    np.roots([4 * STC_fac["nu"], -4, STC_fac["nu"] * w0**2 * tau**2])
-        # )
-        # calculate angular dispersion and pulse front tilt
         # Use the normalised laser intensity to calculate the weighted average of PFT
         weight = np.mean(env_abs, axis=2)
         z_centroids = np.sum(grid.axes[2] * env_abs, axis=2) / np.sum(env_abs, axis=2)
-        derivative_x = np.gradient(z_centroids, axis=0) / grid.dx[0]
-        derivative_y = np.gradient(z_centroids, axis=1) / grid.dx[1]
+        derivative_x = (np.gradient(z_centroids, axis=0) / grid.dx[0])
+        derivative_y = (np.gradient(z_centroids, axis=1) / grid.dx[1])
+
         pft_x = np.average(derivative_x, weights=weight)
         pft_y = np.average(derivative_y, weights=weight)
         STC_fac["pft"] = np.sqrt((pft_x**2 + pft_y**2))
         STC_fac["stc_theta_beta"] = np.arctan2(pft_y, pft_x)
         STC_fac["beta"] = (
-            np.sqrt((pft_x**2 + pft_y**2)) - STC_fac["phi2"] * STC_fac["nu"]
+            np.sqrt((pft_x**2 + pft_y**2)) - STC_fac["Phi2"] * STC_fac["nu"]
         ) / k0
 
     return STC_fac
