@@ -1006,11 +1006,11 @@ def get_STC(dim, grid, k0):
 
         y_centroids = np.sum(grid.axes[1] * weight_y, axis=0) / np.sum(weight_y, axis=0)
         print(len(x_centroids))
-        derivative_x = np.gradient(x_centroids, omega, axis=0)
-        derivative_y = np.gradient(y_centroids, omega, axis=1)
-        theta = np.arctan2(derivative_y, derivative_x)
-        zeta_x = np.average(derivative_x, weights=env_spec)
-        zeta_y = np.average(derivative_y, weights=env_spec)
+        derivative_x = np.gradient(x_centroids, omega, axis=1)
+        derivative_y = np.gradient(y_centroids, omega, axis=0)
+        zeta_x = np.average(derivative_x, weights=weight_x)
+        zeta_y = np.average(derivative_y, weights=weight_y)
+        tSTC_fac["stc_theta_zeta"] = np.arctan2(  zeta_y, zeta_x )
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
         STC_fac["nu"] = (
             4 * STC_fac["zeta"] / (w0**2 * tau**2 + 4 * STC_fac["zeta"] ** 2)
@@ -1020,7 +1020,7 @@ def get_STC(dim, grid, k0):
         # Calculate the STC angle in XOY for spatio coupling
         # theta = np.arctan2(pphi_ptpy, pphi_ptpx)
         # Use the normalised laser intensity to calculate the weighted average of theta
-        STC_fac["stc_theta_zeta"] = np.average(theta, weights=env_spec)
+       # STC_fac["stc_theta_zeta"] = np.average(theta, weights=env_spec)
         # pphi_ptpr = np.sqrt(pphi_ptpy**2 + pphi_ptpx**2)
         # STC_fac["nu"] = np.average(pphi_ptpr, weights=env_abs)
         # STC_fac["nu"] = np.sum(pphi_ptpr * env_abs) / np.sum(env_abs)
