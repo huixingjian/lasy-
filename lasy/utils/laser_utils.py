@@ -877,7 +877,8 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
 
 def get_w0(grid, dim):
     r"""
-    Calculate the laser waist
+    Calculate the laser waist.
+
     Parameters
     ----------
     dim : string
@@ -886,6 +887,12 @@ def get_w0(grid, dim):
                  Cartesian (x,y) transversely, and temporal (t) longitudinally.
         - 'rt' : The laser pulse is represented on a 2D grid:
                  Cylindrical (r) transversely, and temporal (t) longitudinally.
+
+    grid : a Grid object.
+        It contains an ndarray (V/m) with
+        the value of the envelope field and the associated metadata
+        that defines the points at which the laser is defined.
+
     Return
     ----------
     sigma: Standard deviation of a**2 in m
