@@ -965,6 +965,7 @@ def get_STC(dim, grid, tau, w0, k0):
         STC_fac["stc_theta_zeta"] = np.sum(theta * env_abs ) / np.sum( env_abs )
         pphi_ptpr = np.sqrt(pphi_ptpy** 2 + pphi_ptpx**2)
         STC_fac["nu"] = np.sum( pphi_ptpr* env_abs) / np.sum(env_abs)
+
         STC_fac["zeta"] = np.min(
             np.roots([4 * STC_fac["nu"], -4, STC_fac["nu"] * w0**2 * tau**2])
         )
