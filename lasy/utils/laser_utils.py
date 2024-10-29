@@ -1001,6 +1001,7 @@ def get_STC(dim, grid, k0):
         weight_y =np.transpose(env_spec, (2,0,1))
         a = grid.axes[0] * weight_x
         print(a.shape)
+
         x_centroids = np.sum(grid.axes[0] * weight_x, axis=2) / np.sum(weight_x, axis=2)
 
         y_centroids = np.sum(grid.axes[1] * weight_y, axis=0) / np.sum(weight_y, axis=0)
