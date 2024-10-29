@@ -1005,13 +1005,14 @@ def get_STC(dim, grid, k0):
         x_centroids = np.sum(grid.axes[0] * weight_x, axis=2) / np.sum(weight_x, axis=2)
 
         y_centroids = np.sum(grid.axes[1] * weight_y, axis=2) / np.sum(weight_y, axis=2)
-        print(x_centroids.shape)
-        print(y_centroids.shape)
+
         derivative_x = np.gradient(x_centroids, omega, axis=1)
         derivative_y = np.gradient(y_centroids, omega, axis=0)
-        zeta_x = np.average(derivative_x.T, weights=weight_x)
-        zeta_y = np.average(derivative_y.T, weights=weight_y)
-        tSTC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
+        print(derivative_x.shape)
+        print(y_centroids.shape)
+        zeta_x = np.average(derivative_x.T, weights=np.mean(weight_x, axis = 1))
+        zeta_y = np.average(derivative_y.T, weights=np.mean(weight_y,axis=0))
+        STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
         STC_fac["nu"] = (
             4 * STC_fac["zeta"] / (w0**2 * tau**2 + 4 * STC_fac["zeta"] ** 2)
