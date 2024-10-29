@@ -1021,7 +1021,7 @@ def get_STC(dim, grid, k0):
         print(cc.shape)
         print(derivative_y.shape)
         zeta_x = np.average(derivative_x, weights=np.mean(weight_x, axis=2))
-        zeta_y = np.average(derivative_y, weights=np.mean(weight_y, axis=0))
+        zeta_y = np.average(derivative_y, weights=np.mean(weight_y, axis=2))
 
         STC_fac["stc_theta_zeta"] = np.arctan2(zeta_y, zeta_x)
         STC_fac["zeta"] = np.sqrt(zeta_x**2 + zeta_y**2)
