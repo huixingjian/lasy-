@@ -54,7 +54,7 @@ class GaussianProfile(Profile):
         The time at which the laser envelope reaches its maximum amplitude,
         i.e. :math:`t_{peak}` in the above formula.
 
-    x0 , y0: float (in meter) optional (default: '0')
+    x0 , y0 : float (in meter) optional (default: '0')
         Transverse centroid for the laser pulse
 
     cep_phase : float (in radian), optional
