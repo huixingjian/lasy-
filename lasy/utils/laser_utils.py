@@ -1013,10 +1013,9 @@ def get_zeta(dim, grid, k0):
     sum_y = np.sum(weight_y_3d, axis=2)
     if np.any(sum_x == 0) or np.any(sum_y == 0):
         print("Warning: Zero weight sum encountered!")
-    # Handle this case, e.g., by setting the result to a default value or skipping
     xda = np.sum(grid.axes[0] * weight_x_3d, axis=2) / (
         sum_x + 1e-20
-    )  # Add a small epsilon
+    )
     yda = np.sum(grid.axes[1] * weight_y_3d, axis=2) / (
         sum_y + 1e-20
     )  # Add a small epsilon
