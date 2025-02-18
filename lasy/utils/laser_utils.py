@@ -1011,12 +1011,9 @@ def get_zeta(dim, grid, k0):
     weight_y_3d = np.transpose(env_spec_abs2, (2, 0, 1))
     sum_x = np.sum(weight_x_3d, axis=2)
     sum_y = np.sum(weight_y_3d, axis=2)
-    if np.any(sum_x == 0) or np.any(sum_y == 0):
-        print("Warning: Zero weight sum encountered!")
-    xda = np.sum(grid.axes[0] * weight_x_3d, axis=2) / (sum_x + 1e-20)
-    yda = np.sum(grid.axes[1] * weight_y_3d, axis=2) / (
-        sum_y + 1e-20
-    )  # Add a small epsilon
+    eps_wgt = 1e-20 if np.any(sum_x == 0) or np.any(sum_y == 0) else 0
+    xda = np.sum(grid.axes[0] * weight_x_3d, axis=2) / (sum_x + eps_wgt)
+    yda = np.sum(grid.axes[1] * weight_y_3d, axis=2) / (sum_y + eps_wgt) 
     # Calculate spatial chirp zeta
     derivative_x_zeta = np.gradient(xda, omega, axis=0)
     derivative_y_zeta = np.gradient(yda, omega, axis=0)
