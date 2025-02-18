@@ -1013,7 +1013,7 @@ def get_zeta(dim, grid, k0):
     sum_y = np.sum(weight_y_3d, axis=2)
     eps_wgt = 1e-20 if np.any(sum_x == 0) or np.any(sum_y == 0) else 0
     xda = np.sum(grid.axes[0] * weight_x_3d, axis=2) / (sum_x + eps_wgt)
-    yda = np.sum(grid.axes[1] * weight_y_3d, axis=2) / (sum_y + eps_wgt) 
+    yda = np.sum(grid.axes[1] * weight_y_3d, axis=2) / (sum_y + eps_wgt)
     # Calculate spatial chirp zeta
     derivative_x_zeta = np.gradient(xda, omega, axis=0)
     derivative_y_zeta = np.gradient(yda, omega, axis=0)
