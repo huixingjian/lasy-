@@ -1010,9 +1010,9 @@ def get_phi2(dim, grid, k0):
     phi2 = np.average(pomega_pt, weights=env_abs2)
 
     # Calculate group-delayed dispersion in s^2
-    print("The shape of spectrum field is " + string(env_spec.shape))
+    print("The shape of spectrum field is " + str(env_spec.shape))
     phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
-    print("The shape of phase of spectrum field is " + string(phi_envelop_spec.shape))
+    print("The shape of phase of spectrum field is " + str(phi_envelop_spec.shape))
     local_t = np.trapz(phi_envelop_spec, omega, axis=2)
     pt_pomega = np.gradient(local_t, omega, axis=2)
     varphi2 = np.average(pt_pomega, weights=env_spec_abs2)
