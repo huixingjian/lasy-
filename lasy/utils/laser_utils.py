@@ -4,7 +4,7 @@ from axiprop.lib import PropagatorFFT2, PropagatorResampling
 from scipy.constants import c, e, epsilon_0, m_e
 from scipy.interpolate import interp1d
 from scipy.signal import hilbert
-
+from scipy.integrate import simps
 from .grid import Grid
 
 
@@ -997,12 +997,24 @@ def get_phi2(dim, grid):
     tau = 2 * get_duration(grid, dim)
     env = grid.get_temporal_field()
     env_abs2 = np.abs(env**2)
-    # Calculate group-delayed dispersion
+    env_spec = grid.get_spectral_field()
+    env_spec_abs2 = np.abs(env_spec**2)
+    # Get the spectral axis
+    dt = grid.dx[-1]
+    Nt = grid.shape[-1]
+    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0 * c
+    
+    # Calculate group-delayed dispersion in s^-2
     phi_envelop = np.unwrap(np.angle(env), axis=2)
-    pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
-    pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
-    phi2 = np.average(pphi_pt2, weights=env_abs2)
-    varphi2 = np.max(np.roots([4 * phi2, -4, tau**4 * phi2]))
+    local_omega = np.gradient(phi_envelop, grid.dx[-1], axis=2)*c
+    pomega_pt = np.gradient(local_omega, grid.dx[-1], axis=2)
+    phi2 = np.average(pomega_pt, weights=env_abs2)
+
+    # Calculate group-delayed dispersion in s^2
+    phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
+    local_t = simps(phi_envelop_spec, omega, axis=2)
+    pt_pomega = np.gradient(local_t, omega, axis=2)
+    varphi2 = np.average(pt_pomega, weights=env_spec_abs2)
     return phi2, varphi2
 
 
