@@ -1001,7 +1001,7 @@ def get_phi2(dim, grid):
     # Get the spectral axis
     dt = grid.dx[-1]
     Nt = grid.shape[-1]
-    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt)/c
+    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) / c
     print((omega))
     # Calculate group-delayed dispersion in s^-2
     phi_envelop = np.unwrap(np.angle(env), axis=2)
@@ -1013,7 +1013,7 @@ def get_phi2(dim, grid):
     phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
     local_t = np.gradient(phi_envelop_spec, omega, axis=2)
     pt_pomega = np.gradient(local_t, omega, axis=2)
-    var_phi2 = np.average(pt_pomega, weights=env_spec_abs2)/c**2
+    var_phi2 = np.average(pt_pomega, weights=env_spec_abs2) / c**2
 
     return phi2, var_phi2
 
