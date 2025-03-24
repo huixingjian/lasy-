@@ -1014,7 +1014,8 @@ def get_phi2(dim, grid, k0):
     pt_pomega = np.gradient(local_t, omega, axis=2)
     var_phi2 = np.average(pomega_pt, weights=env_abs2)
 
-    return  phi2,var_phi2
+    return phi2, var_phi2
+
 
 def get_zeta(dim, grid, k0):
     r"""
