@@ -1002,7 +1002,7 @@ def get_phi2(dim, grid):
     dt = grid.dx[-1]
     Nt = grid.shape[-1]
     omega = 2 * np.pi * np.fft.fftfreq(Nt, dt)
-    do= omega[1]-omega[0]
+    do = omega[1] - omega[0]
     print(np.diff(omega))
     # Calculate group-delayed dispersion in s^-2
     phi_envelop = np.unwrap(np.angle(env), axis=2)
