@@ -972,7 +972,7 @@ def get_w0(grid, dim):
     return sigma
 
 
-def get_phi2(dim, grid):
+def get_phi2(dim, grid, tau):
     r"""
     Calculate the group-delay dispersion of the laser.
 
@@ -989,12 +989,13 @@ def get_phi2(dim, grid):
     grid : a Grid object.
         It contains an ndarray (V/m) with the value of the envelope field and the associated metadata that defines the points at which the laser is defined.
 
+    tau : float in second 
+        The original duration before GDD optics/ without temporal chirp. This argument may be cancelled in the future with an improvement of the algorithm,
     Returns
     -------
     phi2 : Group-delay dispersion in :math:`\Phi^{(2)} = \frac{d\omega_0}{dt}` (second^-2)
     varphi2 : Group-delay dispersion in :math:`\varphi^{(2)}=\frac{dt_0}{d\omega}` (second^2)
     """
-    tau = 2 * get_duration(grid, dim)
     env = grid.get_temporal_field()
     env_abs2 = np.abs(env**2)
     # Calculate group-delayed dispersion
