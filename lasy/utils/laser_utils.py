@@ -972,7 +972,7 @@ def get_w0(grid, dim):
     return sigma
 
 
-def get_phi2(dim, grid, k0):
+def get_phi2(dim, grid):
     r"""
     Calculate the group-delay dispersion of the laser.
 
@@ -1001,7 +1001,8 @@ def get_phi2(dim, grid, k0):
     # Get the spectral axis
     dt = grid.dx[-1]
     Nt = grid.shape[-1]
-    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0 * c
+    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt)
+    print(np.std(omega))
     # Calculate group-delayed dispersion in s^-2
     phi_envelop = np.unwrap(np.angle(env), axis=2)
     local_omega = np.gradient(phi_envelop, grid.dx[-1], axis=2)
