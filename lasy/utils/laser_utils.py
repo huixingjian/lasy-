@@ -990,7 +990,7 @@ def get_phi2(dim, grid, tau):
         It contains an ndarray (V/m) with the value of the envelope field and the associated metadata that defines the points at which the laser is defined.
 
     tau : float in second
-        The original duration before GDD optics/ without temporal chirp. This argument may be cancelled in the future with an improvement of the algorithm.
+        The original duration before GDD optics/ without temporal chirp. This argument may be removed in the future with an improvement of the algorithm.
 
     Returns
     -------
