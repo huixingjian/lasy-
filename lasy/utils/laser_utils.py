@@ -1014,7 +1014,7 @@ def get_phi2(dim, grid, k0):
     phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
     print("The shape of phase of spectrum field is " + str(phi_envelop_spec.shape))
     local_t = np.trapezoid(phi_envelop_spec, omega, axis=2)
-    print("The shape of phase of local_t is " + str( local_t.shape))
+    print("The shape of phase of local_t is " + str(local_t.shape))
     pt_pomega = np.gradient(local_t, omega, axis=2)
     varphi2 = np.average(pt_pomega, weights=env_spec_abs2)
     return phi2, varphi2
