@@ -99,7 +99,7 @@ err_imag = np.average(
     / np.array(env_combined.imag)
 )
 
-Phi2_3d, phi2_3d = get_phi2(laser_3d.dim, laser_3d.grid,k0)
+Phi2_3d, phi2_3d = get_phi2(laser_3d.dim, laser_3d.grid, k0)
 [zeta_x, zeta_y], [nu_x, nu_y] = get_zeta(
     laser_3d.dim, laser_3d.grid, 2.0 * np.pi / 0.6e-6
 )
