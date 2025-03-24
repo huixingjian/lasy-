@@ -48,7 +48,7 @@ laser_3d = Laser(
     dim="xyt",
     lo=(-10e-6, -10e-6, -10e-14),
     hi=(10e-6, 10e-6, +10e-14),
-    npoints=(100, 100, 200),
+    npoints=(100, 100, 400),
     profile=STCprofile,
 )
 
