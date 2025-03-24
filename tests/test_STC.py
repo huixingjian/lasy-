@@ -99,12 +99,12 @@ err_imag = np.average(
     / np.array(env_combined.imag)
 )
 
-Phi2_3d, phi2_3d = get_phi2(laser_3d.dim, laser_3d.grid)
+Phi2_3d, phi2_3d = get_phi2(laser_3d.dim, laser_3d.grid,k0)
 [zeta_x, zeta_y], [nu_x, nu_y] = get_zeta(
     laser_3d.dim, laser_3d.grid, 2.0 * np.pi / 0.6e-6
 )
 [beta_x, beta_y] = get_beta(laser_3d.dim, laser_3d.grid, 2.0 * np.pi / 0.6e-6)
-
+print(phi2_3d)
 assert (err_real + err_imag) < 1e-6
 np.testing.assert_approx_equal(phi2_3d, phi2, significant=2)
 np.testing.assert_approx_equal(zeta_y, zeta, significant=2)
