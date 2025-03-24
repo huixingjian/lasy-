@@ -2,7 +2,6 @@ import numpy as np
 from axiprop.containers import ScalarFieldEnvelope
 from axiprop.lib import PropagatorFFT2, PropagatorResampling
 from scipy.constants import c, e, epsilon_0, m_e
-from scipy.integrate import trapz
 from scipy.interpolate import interp1d
 from scipy.signal import hilbert
 
@@ -1012,7 +1011,7 @@ def get_phi2(dim, grid, k0):
 
     # Calculate group-delayed dispersion in s^2
     phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
-    local_t = trapz(phi_envelop_spec, omega, axis=2)
+    local_t = np.trapz(phi_envelop_spec, omega, axis=2)
     pt_pomega = np.gradient(local_t, omega, axis=2)
     varphi2 = np.average(pt_pomega, weights=env_spec_abs2)
     return phi2, varphi2
