@@ -1002,23 +1002,19 @@ def get_phi2(dim, grid, k0):
     dt = grid.dx[-1]
     Nt = grid.shape[-1]
     omega = 2 * np.pi * np.fft.fftfreq(Nt, dt) + k0 * c
-
     # Calculate group-delayed dispersion in s^-2
     phi_envelop = np.unwrap(np.angle(env), axis=2)
-    local_omega = np.gradient(phi_envelop, grid.dx[-1], axis=2) * c
+    local_omega = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     pomega_pt = np.gradient(local_omega, grid.dx[-1], axis=2)
     phi2 = np.average(pomega_pt, weights=env_abs2)
 
     # Calculate group-delayed dispersion in s^2
-    print("The shape of spectrum field is " + str(env_spec.shape))
     phi_envelop_spec = np.unwrap(np.angle(env_spec), axis=2)
-    print("The shape of phase of spectrum field is " + str(phi_envelop_spec.shape))
-    local_t = np.trapezoid(phi_envelop_spec, omega, axis=2)
-    print("The shape of phase of local_t is " + str(local_t.shape))
+    local_t = np.gradient(phi_envelop_spec, omega, axis=2)
     pt_pomega = np.gradient(local_t, omega, axis=2)
-    varphi2 = np.average(pt_pomega, weights=env_spec_abs2)
-    return phi2, varphi2
+    var_phi2 = np.average(pomega_pt, weights=env_abs2)
 
+    return  phi2,var_phi2
 
 def get_zeta(dim, grid, k0):
     r"""
