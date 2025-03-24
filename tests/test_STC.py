@@ -24,7 +24,7 @@ tau = 5e-14  # s
 t_peak = 0.0  # s
 beta = 3e-18  # s
 zeta = 2.4e-22  # m * s
-phi2 = 2.4e-24 # s ^ 2
+phi2 = 2.4e-24  # s ^ 2
 stc_theta = scc.pi / 2  # rad
 z_r = (np.pi * w0**2) / wavelength
 z_foc = 3 * z_r
@@ -105,7 +105,7 @@ Phi2_3d, phi2_3d = get_phi2(laser_3d.dim, laser_3d.grid)
 )
 [beta_x, beta_y] = get_beta(laser_3d.dim, laser_3d.grid, 2.0 * np.pi / 0.6e-6)
 print(phi2_3d)
-print(np.max(np.roots([4 * np.abs(Phi2_3d), -4, tau**4 *np.abs(Phi2_3d)])))
+print(np.max(np.roots([4 * np.abs(Phi2_3d), -4, tau**4 * np.abs(Phi2_3d)])))
 assert (err_real + err_imag) < 1e-6
 np.testing.assert_approx_equal(phi2_3d, phi2, significant=2)
 np.testing.assert_approx_equal(zeta_y, zeta, significant=2)
