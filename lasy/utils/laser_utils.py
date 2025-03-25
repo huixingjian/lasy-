@@ -1004,7 +1004,16 @@ def get_phi2(dim, grid, tau):
     pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
     pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
     phi2 = np.average(pphi_pt2, weights=env_abs2)
-    varphi2 = np.max(np.roots([4 * phi2, -4, tau**4 * phi2]))
+    # varphi2 = np.max(np.roots([4 * phi2, -4, tau**4 * phi2]))
+    dt = laser_3d.grid.dx[-1]
+    Nt = laser_3d.grid.shape[-1]
+    omega = 2 * np.pi * np.fft.fftfreq(Nt, dt)+2*scc.pi*scc.c/wavelength
+    env_spec = laser_3d.grid.get_spectral_field()*np.exp(-1j*omega*laser_3d.grid.lo[-1]
+    env_spec_abs2 = np.abs(env_spec**2)
+    phi_envelop_spec= np.unwrap(np.angle(env_spec),axis = -1)
+    local_t = np.gradient(phi_envelop_spec, omega, axis=2)
+    pt_pomega = np.gradient(local_t, omega, axis=2)
+    varphi2 = np.average(pt_pomega, weights=np.abs(env_spec)**2)
     return phi2, varphi2
 
 
