@@ -1,6 +1,9 @@
 Transverse Laser Profiles
 =========================
 
+.. autoclass:: lasy.profiles.transverse.TransverseProfile
+    :members:
+
 .. toctree::
    :maxdepth: 4
    :hidden:
@@ -11,3 +14,5 @@ Transverse Laser Profiles
    super_gaussian_profile
    jinc_profile
    transverse_profile_from_data
+   plane_wave
+   flattened_gaussian

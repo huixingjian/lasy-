@@ -27,7 +27,7 @@ def get_zernike_nm(j):
     return int(m), int(n)
 
 
-def zernike(x, y, pupilCoords, j):
+def zernike(x, y, pupil_coords, j):
     """
     Calculate the Zernike Polynomials to arbitrary order.
 
@@ -38,7 +38,7 @@ def zernike(x, y, pupilCoords, j):
     x, y : ndarrays (meters)
         The position at which to calculate the profile
 
-    pupilCoords : tuple of floats (meters)
+    pupil_coords : tuple of floats (meters)
         A tuple of floats (cgx,cgy,r) with the first two elements corresponding to the center
         of the zernike mode and the third the radius of the mode
 
@@ -51,9 +51,9 @@ def zernike(x, y, pupilCoords, j):
         The Zernike mode
     """
     # Setup
-    (cgx, cgy, r) = pupilCoords
-    rho = xp.sqrt((x - cgx) ** 2 + (y - cgy) ** 2) / r
-    theta = xp.arctan2(y - cgy, x - cgx)
+    (cgx, cgy, r) = pupil_coords
+    rho = np.sqrt((x - cgx) ** 2 + (y - cgy) ** 2) / r
+    theta = np.arctan2(y - cgy, x - cgx)
 
     m, n = get_zernike_nm(j)
 
@@ -97,23 +97,23 @@ def RmnGenerator(n, m, rho):
         The radial component of the Zernike mode
     """
     if n == 0:
-        try:
+        if len(rho.shape) == 1:
             (r,) = rho.shape
             Rmn = xp.ones(
                 r,
             )
-        except:
+        else:
             r, c = rho.shape
             Rmn = xp.ones((r, c))
     elif (n - m) % 2 == 0:
         # Even, Rmn is not 0
         k = np.linspace(0, int((n - m) / 2), int((n - m) / 2) + 1).astype(int)
-        try:
+        if len(rho.shape) == 1:
             (r,) = rho.shape
             Rmn = xp.zeros(
                 r,
             )
-        except:
+        else:
             r, c = rho.shape
             Rmn = xp.zeros((r, c))
         for i in k:
@@ -124,12 +124,12 @@ def RmnGenerator(n, m, rho):
             ) * rho ** (n - 2 * i)
 
     else:
-        try:
+        if len(rho.shape) == 1:
             (r,) = rho.shape
             Rmn = xp.zeros(
                 r,
             )
-        except:
+        else:
             r, c = rho.shape
             Rmn = xp.zeros((r, c))
 

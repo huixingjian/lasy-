@@ -57,20 +57,26 @@ def gerchberg_saxton_algo(
     phase1 = xp.zeros_like(amp1)
 
     if condition == "max_iterations":
-        breakout = lambda i: i < max_iterations
+
+        def breakout(i):
+            return i < max_iterations
+
         cond = 0
     elif condition == "amplitude_error":
-        breakout = lambda amp: amp / amp1_summed > amplitude_error
+
+        def breakout(amp):
+            return amp / amp1_summed > amplitude_error
+
         cond = 9e30
 
     i = 0
     while breakout(cond):
-        laser1.grid.set_temporal_field(amp1 * xp.exp(1j * phase1))
-        laser1.propagate(dz, show_progress=False)
+        laser1.grid.set_temporal_field(amp1 * np.exp(1j * phase1))
+        laser1.propagate(dz, verbose=False)
 
-        phase2 = xp.angle(laser1.grid.get_temporal_field())
-        laser2.grid.set_temporal_field(amp2 * xp.exp(1j * phase2))
-        laser2.propagate(-dz, show_progress=False)
+        phase2 = np.angle(laser1.grid.get_temporal_field())
+        laser2.grid.set_temporal_field(amp2 * np.exp(1j * phase2))
+        laser2.propagate(-dz, verbose=False)
 
         field2 = laser2.grid.get_temporal_field()
         phase1 = xp.angle(field2)

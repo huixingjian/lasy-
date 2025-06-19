@@ -7,12 +7,19 @@ class TransverseProfile(object):
 
     Any new transverse profile should inherit from this class, and define its own
     `evaluate` method, using the same signature as the method below.
+    For most cases, use derived classes instead of this base class.
+
+    Common operators (addition and multiplication by a scalar) are provided as part of this base class.
+    For such operations, the user is responsible for handling the complex phase and weights of summed profiles.
+    In particular, summing between different types of profiles is not recommended.
+    This feature is tailored for linear combination of profiles of the same type, in particular analytical profiles like Laguerre-gauss or Hermite-Gauss.
     """
 
     def __init__(self):
         # Initialise x and y spatial offsets as placeholders
         self.x_offset = 0
         self.y_offset = 0
+        self.is_plane_wave = False
 
     def _evaluate(self, x, y):
         """
@@ -45,6 +52,10 @@ class TransverseProfile(object):
     def __rmul__(self, factor):
         """Return the scaled transverse profile."""
         return ScaledTransverseProfile(self, factor)
+
+    def __update_is_plane_wave__(self, value):
+        """Update state of is_plane_wave variable."""
+        self.is_plane_wave = value
 
     def evaluate(self, x, y):
         """
@@ -100,9 +111,9 @@ class SummedTransverseProfile(TransverseProfile):
         """Initialize the summed profile."""
         TransverseProfile.__init__(self)
         # Check that all transverse_profiles are TransverseProfile objects
-        assert all(
-            [isinstance(tp, TransverseProfile) for tp in transverse_profiles]
-        ), "All summands must be Profile objects."
+        assert all([isinstance(tp, TransverseProfile) for tp in transverse_profiles]), (
+            "All summands must be Profile objects."
+        )
         self.transverse_profiles = transverse_profiles
 
     def evaluate(self, x, y):
@@ -131,9 +142,9 @@ class ScaledTransverseProfile(TransverseProfile):
         # Check that the factor is a number
         assert isinstance(factor, (int, float, complex)), "The factor must be a number."
         # Check that the profile is a Profile object
-        assert isinstance(
-            transverse_profile, TransverseProfile
-        ), "The profile must be a TransverseProfile object."
+        assert isinstance(transverse_profile, TransverseProfile), (
+            "The profile must be a TransverseProfile object."
+        )
         self.transverse_profile = transverse_profile
         self.factor = factor
 

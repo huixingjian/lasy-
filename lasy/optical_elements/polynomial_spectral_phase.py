@@ -17,12 +17,16 @@ class PolynomialSpectralPhase(OpticalElement):
 
     .. math::
 
-        \phi(\omega) = \frac{\text{GDD}}{2!} (\omega - \omega_0)^2 + \frac{\text{TOD}}{3!} (\omega - \omega_0)^3 + \frac{\text{FOD}}{4!} (\omega - \omega_0)^4
+        \phi(\omega) = \text{delay} (\omega - \omega_0) + \frac{\text{GDD}}{2!} (\omega - \omega_0)^2 + \frac{\text{TOD}}{3!} (\omega - \omega_0)^3 + \frac{\text{FOD}}{4!} (\omega - \omega_0)^4
 
     The other parameters in this formula are defined below.
 
     Parameters
     ----------
+    omega0 : float (in rad/s)
+        Central angular frequency about which the polynomial is expanded
+    delay : float (in s), optional
+        Group delay (by default: ``delay=0``). Positive value delays the pulse, i.e. it arrives at a later time
     gdd : float (in s^2), optional
         Group Delay Dispersion (by default: ``gdd=0``). ``gdd > 0`` corresponds to a positive
         chirp, i.e. the low-frequency part of the spectrum arriving earlier than the
@@ -35,12 +39,14 @@ class PolynomialSpectralPhase(OpticalElement):
         Fourth-order Dispersion (by default: ``fod=0``).
     """
 
-    def __init__(self, gdd=0, tod=0, fod=0):
+    def __init__(self, omega0, delay=0, gdd=0, tod=0, fod=0):
+        self.omega0 = omega0
+        self.delay = delay
         self.gdd = gdd
         self.tod = tod
         self.fod = fod
 
-    def amplitude_multiplier(self, x, y, omega, omega0):
+    def amplitude_multiplier(self, x, y, omega):
         """
         Return the amplitude multiplier.
 
@@ -49,9 +55,7 @@ class PolynomialSpectralPhase(OpticalElement):
         x, y, omega : ndarrays of floats
             Define points on which to evaluate the multiplier.
             These arrays need to all have the same shape.
-        omega0 : float (in rad/s)
-            Central angular frequency, as used for the definition
-            of the laser envelope.
+
 
         Returns
         -------
@@ -60,9 +64,10 @@ class PolynomialSpectralPhase(OpticalElement):
             This array has the same shape as the array omega.
         """
         spectral_phase = (
-            self.gdd / 2 * (omega - omega0) ** 2
-            + self.tod / 6 * (omega - omega0) ** 3
-            + self.fod / 24 * (omega - omega0) ** 4
+            self.delay * (omega - self.omega0)
+            + self.gdd / 2 * (omega - self.omega0) ** 2
+            + self.tod / 6 * (omega - self.omega0) ** 3
+            + self.fod / 24 * (omega - self.omega0) ** 4
         )
 
         return np.exp(1j * spectral_phase)

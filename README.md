@@ -1,10 +1,34 @@
 # lasy
+[![Documentation Status](https://readthedocs.org/projects/LASY/badge/?version=latest)](https://lasydoc.readthedocs.io/en/latest/)
+![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Paaaaarth/LASY/Badges/coverage-badge.json)
+[![PyPI](https://img.shields.io/pypi/v/LASY)](https://pypi.org/project/lasy/)
+[![License](https://img.shields.io/badge/License-view-blue)](https://github.com/LASY-org/lasy/blob/development/license.txt)
 
 ## Overview
 
 `lasy` is a Python library that facilitates the initialization of complex laser pulses, in simulations of laser-plasma interactions.
 
 More specifically, `lasy` offers many ways to define complex laser pulses (e.g. from commonly-known analytical formulas, from experimental measurements, etc.) and offers pre-processing functionalities (e.g. propagation, re-normalization, geometry conversion). The laser field is then exported in a standardized file, that can be read by external simulation codes.
+
+## Installation
+
+For the standard release of the code simply run:
+```
+python3 -m pip install lasy
+```
+
+If you would prefer the most recent version of the code with the latest functionalities, then run:
+```
+python3 -m pip install git+https://github.com/LASY-org/lasy.git
+```
+
+## Tutorials
+An interactive Google Colab tutorial showing some of the main functionalities of lasy can be found [here](https://colab.research.google.com/drive/1nPwgIUea6Jhzc9CSPDZXCcviWCmebjF1?usp=sharing).
+
+This document is updated on a best-effort basis to keep track with developments in the lasy code base.
+
+Additionally, a set of static (automatically tested) examples can be found [here](https://lasydoc.readthedocs.io/en/latest/tutorials/index.html).
+
 
 ## Documentation
 
@@ -25,6 +49,8 @@ In cylindrical coordinates, the envelope is decomposed in $N_m$ azimuthal modes 
    E_x (r,\theta,t) = \mathrm{Re}\left( \sum_{-N_m+1}^{N_m-1}\mathcal{E}_m(r,t) e^{-im\theta}e^{-i\omega_0t}p_x\right)\\
    E_y (r,\theta,t) = \mathrm{Re}\left( \sum_{-N_m+1}^{N_m-1}\mathcal{E}_m(r,t) e^{-im\theta}e^{-i\omega_0t}p_y\right).\end{aligned}
 ```
+
+For more information, please check our [arXiv preprint](https://doi.org/10.48550/arXiv.2403.12191).
 
 ## Workflow
 
@@ -49,18 +75,14 @@ Then, for each contribution:
 - Functions in `utils/laser_utils.py` only depend on standard types (Python & Numpy) and on the `Grid` class. That way, they are relatively stand-alone and can be used on different data structures. A simple Grid factory is provided for that purpose.
 - A PR should be open for any contribution: the description helps to explain the code and open dicussion.
 
-## Install
 
-```
-python3 -m pip install lasy
-```
+
+## Testing
 
 For tests, you need to have a few extra packages, such as `pytest` and `openpmd-viewer` installed:
 ```bash
 python3 -m pip install -r tests/requirements.txt
 ```
-
-## Test
 
 After successful installation, you can run the unit tests:
 ```bash
@@ -81,7 +103,7 @@ python3 -m pytest -s -vvvv tests/
 Install sphinx (https://www.sphinx-doc.org/en/master/usage/installation.html)
 
 ```bash
+python -m pip install --upgrade -r docs/requirements.txt
 cd docs
-python -m pip install -r requirements.txt
 sphinx-build -b html source _build
 ```

@@ -14,6 +14,7 @@ class LongitudinalProfile(object):
     def __init__(self, wavelength):
         self.lambda0 = wavelength
         self.omega0 = 2 * pi * c / self.lambda0
+        self.is_cw = False
 
     def evaluate(self, t):
         """
@@ -32,4 +33,8 @@ class LongitudinalProfile(object):
         """
         # The base class only defines dummy fields
         # (This should be replaced by any class that inherits from this one.)
-        return xp.zeros(t.shape, dtype="complex128")
+        return np.zeros(t.shape, dtype="complex128")
+
+    def __update_is_cw__(self, value):
+        """Update state of is_cw variable."""
+        self.is_cw = value
