@@ -1,7 +1,7 @@
-from lasy.backend import xp
 from scipy import special
 from scipy.constants import c, epsilon_0
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.optical_elements import Axicon
 from lasy.profiles.gaussian_profile import GaussianProfile

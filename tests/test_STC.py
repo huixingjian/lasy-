@@ -6,7 +6,6 @@ This test verifies the correct implementation of initialization and diagnostics 
 Additionally, the correctness is validated by comparing the Gaussian profile with a combined Gaussian profile without STC out of focus.
 """
 
-import numpy as np
 import scipy.constants as scc
 
 from lasy.laser import Laser

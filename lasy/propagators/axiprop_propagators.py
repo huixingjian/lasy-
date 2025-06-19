@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-from lasy.backend import xp, use_cupy
 from axiprop.containers import ScalarFieldEnvelope
 from axiprop.lib import (
     PropagatorFFT2,
@@ -11,6 +10,8 @@ from axiprop.lib import (
 from axiprop.utils import import_from_lasy_grid
 from scipy.constants import c
 
+from lasy.backend import use_cupy, xp
+
 from .propagator import Propagator
 
 # Select backend
@@ -18,6 +19,7 @@ if use_cupy:
     backend = "CU"
 else:
     backend = "NP"
+
 
 class AxipropPropagator(Propagator):
     """
@@ -151,7 +153,7 @@ class AxipropPropagator(Propagator):
                 kz_axis=container_in.k_freq,
                 verbose=verbose,
                 backend=self.backend,
-                            )
+            )
 
     def propagate(
         self,

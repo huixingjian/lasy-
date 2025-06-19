@@ -1,7 +1,7 @@
 import openpmd_api as io
 from scipy.constants import c
-from lasy.backend import xp
 
+from lasy.backend import xp
 from lasy.utils.laser_utils import (
     create_grid,
     field_to_envelope,

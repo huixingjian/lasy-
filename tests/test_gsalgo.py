@@ -2,7 +2,6 @@
 
 import copy
 
-from lasy.backend import xp
 import pytest
 
 from lasy.backend import xp

@@ -1,6 +1,7 @@
-from lasy.backend import xp
 import pytest
 from scipy.constants import c
+
+from lasy.backend import xp
 
 xp.random.seed(0)  # Fix random seed for reproducibility
 

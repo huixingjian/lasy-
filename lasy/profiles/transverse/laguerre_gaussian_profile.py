@@ -1,6 +1,5 @@
 from math import factorial
 
-from lasy.backend import xp
 from scipy.special import genlaguerre
 
 from lasy.backend import xp

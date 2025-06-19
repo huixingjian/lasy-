@@ -8,7 +8,6 @@ we then check that the waist has the expected value in the far field (i.e. in th
 """
 
 from lasy.backend import xp
-
 from lasy.laser import Grid, Laser
 from lasy.optical_elements import ParabolicMirror
 from lasy.profiles.combined_profile import CombinedLongitudinalTransverseProfile

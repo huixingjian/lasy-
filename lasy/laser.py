@@ -10,7 +10,7 @@ from lasy.utils.laser_utils import (
 from lasy.utils.openpmd_helper import write_to_openpmd_file
 from lasy.utils.plotting import show_laser
 
-from .backend import use_cupy, xp
+from .backend import xp
 
 
 class Laser:

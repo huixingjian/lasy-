@@ -1,5 +1,3 @@
-from lasy.backend import xp
-
 from .longitudinal_profile import LongitudinalProfile
 
 

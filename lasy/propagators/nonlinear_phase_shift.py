@@ -1,7 +1,8 @@
 from copy import deepcopy
 
-from lasy.backend import xp
 from scipy.constants import c, epsilon_0
+
+from lasy.backend import xp
 
 
 class NonlinearKerrStep:

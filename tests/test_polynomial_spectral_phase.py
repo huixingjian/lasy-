@@ -7,9 +7,9 @@ adding spectral phase to it, and checking the corresponding
 temporal shape of the laser pulse against analytical formulas.
 """
 
-from lasy.backend import xp
 from scipy.constants import c
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.optical_elements import PolynomialSpectralPhase
 from lasy.profiles.gaussian_profile import GaussianProfile

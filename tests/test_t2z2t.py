@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from lasy.backend import xp
 import pytest
 from scipy.constants import c
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.profiles.gaussian_profile import GaussianProfile
 from lasy.utils.laser_utils import export_to_z, import_from_z

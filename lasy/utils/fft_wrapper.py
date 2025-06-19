@@ -1,4 +1,4 @@
-from lasy.backend import xp, use_cupy
+from lasy.backend import xp
 
 
 def fft(which, arr_in, axes_in, from_domain):

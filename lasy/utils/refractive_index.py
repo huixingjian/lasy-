@@ -9,10 +9,11 @@ import os
 import warnings
 from pprint import pprint
 
-from lasy.backend import xp
 import scipy.constants as ct
 import yaml
 from scipy.interpolate import CubicSpline
+
+from lasy.backend import xp
 
 try:
     import numdifftools as nd

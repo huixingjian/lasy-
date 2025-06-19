@@ -1,4 +1,4 @@
-from lasy.backend import xp, use_cupy
+from lasy.backend import use_cupy, xp
 
 from .fft_wrapper import fft, frequency_axis
 
@@ -206,12 +206,12 @@ class Grid:
             self.spectral2temporal_fft()
         else:
             raise ValueError("Both temporal and spectral fields are invalid")
-        
+
         if to_cpu and use_cupy:
             return xp.asnumpy(self.temporal_field.copy())
         else:
-            return self.temporal_field.copy()  
-        
+            return self.temporal_field.copy()
+
     def get_spectral_field(self, to_cpu=True):
         """
         Return a copy of the spectral field.
@@ -248,7 +248,9 @@ class Grid:
             raise ValueError("Both temporal and spectral fields are invalid")
 
         if to_cpu and use_cupy:
-            return xp.asnumpy(self.spectral_field.copy()), xp.asnumpy(self.spectral_axis.copy())
+            return xp.asnumpy(self.spectral_field.copy()), xp.asnumpy(
+                self.spectral_axis.copy()
+            )
         else:
             return self.spectral_field.copy(), self.spectral_axis.copy()
 

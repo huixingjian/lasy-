@@ -1,7 +1,8 @@
 import math
 
-from lasy.backend import xp
 from scipy.special import binom
+
+from lasy.backend import xp
 
 from .transverse_profile import TransverseProfile
 

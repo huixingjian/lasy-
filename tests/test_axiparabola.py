@@ -7,7 +7,6 @@ checks that the field amplitude remains high over the focal range.
 """
 
 from lasy.backend import xp
-
 from lasy.laser import Laser
 from lasy.optical_elements import Axiparabola
 from lasy.profiles.combined_profile import CombinedLongitudinalTransverseProfile

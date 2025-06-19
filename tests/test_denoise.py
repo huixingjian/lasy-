@@ -7,7 +7,6 @@ value.
 """
 
 from lasy.backend import xp
-
 from lasy.profiles.transverse.super_gaussian_profile import (
     SuperGaussianTransverseProfile,
 )

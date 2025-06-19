@@ -1,6 +1,6 @@
-from lasy.backend import xp
 from scipy.constants import c, epsilon_0
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.optical_elements.polynomial_spectral_phase import PolynomialSpectralPhase
 from lasy.profiles.gaussian_profile import GaussianProfile

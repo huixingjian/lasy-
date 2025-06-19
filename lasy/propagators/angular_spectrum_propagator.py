@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from lasy.backend import xp
 from scipy.constants import c
 
+from lasy.backend import xp
 from lasy.utils.fft_wrapper import fft
 
 from .propagator import Propagator

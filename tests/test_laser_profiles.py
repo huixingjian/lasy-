@@ -2,10 +2,10 @@
 
 import copy
 
-from lasy.backend import xp
 import pytest
 from scipy.constants import c
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.optical_elements.parabolic_mirror import ParabolicMirror
 from lasy.profiles import (

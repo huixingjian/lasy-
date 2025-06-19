@@ -6,9 +6,9 @@ checks the implementation of the peak_fluence and peak_power normalizations
 as well as some measurement functionality from laser utils
 """
 
-from lasy.backend import xp
 from scipy.constants import c, epsilon_0
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.profiles import CombinedLongitudinalTransverseProfile
 from lasy.profiles.longitudinal import (

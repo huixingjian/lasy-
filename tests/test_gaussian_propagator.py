@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from lasy.backend import xp
 import pytest
 
 from lasy.backend import use_cupy, xp
