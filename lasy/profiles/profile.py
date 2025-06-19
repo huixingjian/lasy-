@@ -38,8 +38,8 @@ class Profile(object):
         norm_pol = xp.sqrt(xp.abs(pol[0]) ** 2 + xp.abs(pol[1]) ** 2)
         self.pol = xp.array([pol[0] / norm_pol, pol[1] / norm_pol])
         self.lambda0 = wavelength
-        self.omega0 = 2 * np.pi * c / self.lambda0
-        self.k0 = 2.0 * np.pi / wavelength
+        self.omega0 = 2 * xp.pi * c / self.lambda0
+        self.k0 = 2.0 * xp.pi / wavelength
         self.is_cw = False
         self.is_plane_wave = False
 
@@ -107,12 +107,12 @@ class SummedProfile(Profile):
         lambda0s = [p.lambda0 for p in self.profiles]
         pols = [p.pol for p in self.profiles]
         # Check that all wavelengths are the same
-        assert np.allclose(lambda0s, lambda0s[0]), (
+        assert xp.allclose(lambda0s, lambda0s[0]), (
             "Added profiles must have the same wavelength."
         )
         lambda0 = profiles[0].lambda0
         # Check that all polarizations are the same
-        assert np.allclose(pols, pols[0]), (
+        assert xp.allclose(pols, pols[0]), (
             "Added profiles must have the same polarization."
         )
         pol = profiles[0].pol

@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-import numpy as np
+from lasy.backend import xp
 from scipy.constants import c, epsilon_0
 
 
@@ -65,6 +65,6 @@ class NonlinearKerrStep:
 
         phase = self.n2 * self.k0 * intensity * distance
 
-        grid_out.set_temporal_field(temporal_field * np.exp(1j * phase))
+        grid_out.set_temporal_field(temporal_field * xp.exp(1j * phase))
 
         return grid_out

@@ -50,7 +50,7 @@ class GaussianTransverseProfile(TransverseProfile):
             assert wavelength is not None, (
                 "You need to pass the wavelength, when `z_foc` is non-zero."
             )
-            self.z_foc_over_zr = z_foc * wavelength / (np.pi * w0**2)
+            self.z_foc_over_zr = z_foc * wavelength / (xp.pi * w0**2)
 
     def _evaluate(self, x, y):
         """

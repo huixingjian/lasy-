@@ -73,18 +73,18 @@ class LongitudinalProfileFromData(LongitudinalProfile):
                 wavelength = data["axis"]  # Accept as wavelength
                 spectral_intensity = data["intensity"]
             else:
-                wavelength = 2.0 * np.pi * c / data["axis"]  # Convert to wavelength
+                wavelength = 2.0 * xp.pi * c / data["axis"]  # Convert to wavelength
                 spectral_intensity = (
-                    data["intensity"] * 2.0 * np.pi * c / wavelength**2
+                    data["intensity"] * 2.0 * xp.pi * c / wavelength**2
                 )  # Convert spectral data
-            assert np.all(np.diff(wavelength) > 0) or np.all(np.diff(wavelength) < 0), (
+            assert xp.all(xp.diff(wavelength) > 0) or xp.all(xp.diff(wavelength) < 0), (
                 'data["axis"] must be in monotonically increasing or decreasing order.'
             )
             if data.get("phase") is None:
                 spectral_phase = xp.zeros_like(wavelength)
             else:
                 spectral_phase = data["phase"]
-            if np.all(np.diff(wavelength) < 0):  # Flip arrays
+            if xp.all(xp.diff(wavelength) < 0):  # Flip arrays
                 wavelength = wavelength[::-1]
                 spectral_intensity = spectral_intensity[::-1]
                 spectral_phase = spectral_phase[::-1]
@@ -112,9 +112,9 @@ class LongitudinalProfileFromData(LongitudinalProfile):
 
             # Inverse Fourier Transform to the time domain
             t_amplitude = (
-                np.fft.ifftshift(
-                    np.fft.fft(
-                        np.fft.fftshift(freq_amplitude * np.exp(1j * freq_phase))
+                xp.fft.ifftshift(
+                    xp.fft.fft(
+                        xp.fft.fftshift(freq_amplitude * xp.exp(1j * freq_phase))
                     )
                 )
                 / dt

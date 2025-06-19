@@ -1,7 +1,5 @@
 import math
 
-import numpy as np
-
 from lasy.backend import xp
 
 
@@ -52,8 +50,8 @@ def zernike(x, y, pupil_coords, j):
     """
     # Setup
     (cgx, cgy, r) = pupil_coords
-    rho = np.sqrt((x - cgx) ** 2 + (y - cgy) ** 2) / r
-    theta = np.arctan2(y - cgy, x - cgx)
+    rho = xp.sqrt((x - cgx) ** 2 + (y - cgy) ** 2) / r
+    theta = xp.arctan2(y - cgy, x - cgx)
 
     m, n = get_zernike_nm(j)
 
@@ -107,7 +105,7 @@ def RmnGenerator(n, m, rho):
             Rmn = xp.ones((r, c))
     elif (n - m) % 2 == 0:
         # Even, Rmn is not 0
-        k = np.linspace(0, int((n - m) / 2), int((n - m) / 2) + 1).astype(int)
+        k = xp.linspace(0, int((n - m) / 2), int((n - m) / 2) + 1).astype(int)
         if len(rho.shape) == 1:
             (r,) = rho.shape
             Rmn = xp.zeros(

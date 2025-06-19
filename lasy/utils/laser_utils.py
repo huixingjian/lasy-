@@ -482,7 +482,7 @@ def get_spectrum(
         if dim == "xyt":
             spectrum = xp.sum(spectrum * dV / dz, axis=(0, 1))
         else:
-            spectrum = xp.sum(spectrum[0] * dV[:, xp.newaxis] / dz, axis=0)
+            spectrum = np.sum(spectrum[0] * dV[:, np.newaxis] / dz, axis=0)
 
     assert ordering in ["zero_first", "zero_center"]
     if ordering == "zero_center":
