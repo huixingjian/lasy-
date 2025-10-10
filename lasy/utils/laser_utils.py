@@ -1287,9 +1287,10 @@ def get_propation_angle(dim, grid, k0):
     assert dim == "xyt", "Propagation is always on-axis for axis-symmetric dimension."
     env = grid.get_temporal_field()
     env_abs2 = np.abs(env**2)
-    phi_envelop_abs = np.unwrap(np.angle(env), axis=2)
-    pphi_px = np.gradient(phi_envelop_abs, grid.dx[1], axis=1)
-    pphi_py = np.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+    phi_envelop_abs = np.unwrap(np.angle(env), axis=0)
+    phi_envelop_abs = np.unwrap(np.angle(env), axis=1)
+    pphi_px = np.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+    pphi_py = np.gradient(phi_envelop_abs, grid.dx[1], axis=1)
     angle_x = np.average(pphi_px, weights=env_abs2) / k0
     angle_y = np.average(pphi_py, weights=env_abs2) / k0
     return [angle_x, angle_y]
