@@ -1,5 +1,3 @@
-import cupy as cp
-
 from lasy.backend import xp
 
 
@@ -62,25 +60,3 @@ def find_d4sigma(img):
 def array_type(x):
     dummy = xp.get_array_module(x)  # 'xp' is a standard usage in the community
     print("Using:", dummy.__name__)
-
-
-def cupy_to_numpy(*arrays):
-    """
-    Convert one or more CuPy arrays to NumPy arrays.
-
-    Parameters
-    ----------
-        *arrays: One or more cp.ndarray inputs.
-
-    Returns
-    -------
-        A single NumPy array if one input is given,
-        or a tuple of NumPy arrays if multiple are given.
-    """
-    converted = []
-    for arr in arrays:
-        if not isinstance(arr, cp.ndarray):
-            raise TypeError(f"Expected CuPy array, got {type(arr)}")
-        converted.append(cp.asnumpy(arr))
-
-    return converted[0] if len(converted) == 1 else tuple(converted)

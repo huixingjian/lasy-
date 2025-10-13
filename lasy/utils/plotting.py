@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
+from lasy.backend import xp
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.constants import c, epsilon_0
 
@@ -68,16 +68,16 @@ def show_laser(
         kw["cmap"] = "Reds"  # Set default colormap
 
     if envelope_type == "intensity":
-        F = epsilon_0 * c / 2 * np.abs(grid.get_temporal_field()) ** 2 / 1e4
+        F = epsilon_0 * c / 2 * xp.abs(grid.get_temporal_field()) ** 2 / 1e4
         cbar_label = r"I (W/cm$^2$)"
     elif envelope_type == "vector_potential":
         assert omega0 is not None, (
             "omega0 must be provided if envelope_type == 'vector_potential'"
         )
-        F = np.abs(field_to_vector_potential(grid=grid, omega0=omega0))
+        F = xp.abs(field_to_vector_potential(grid=grid, omega0=omega0))
         cbar_label = r"$|a|$"
     elif envelope_type == "field":
-        F = np.abs(grid.get_temporal_field())
+        F = xp.abs(grid.get_temporal_field())
         cbar_label = r"$|E|$ (V/m)"
     else:
         raise ValueError(
@@ -131,7 +131,7 @@ def show_laser(
     if dim == "rt":
         # Show field in the plane y=0, above and below axis, with proper sign for each mode
         F_plot = [
-            np.concatenate(((-1.0) ** m * F[m, ::-1], F[m]))
+            xp.concatenate(((-1.0) ** m * F[m, ::-1], F[m]))
             for m in grid.azimuthal_modes
         ]
         F_plot = sum(F_plot)  # Sum all the modes
@@ -188,21 +188,21 @@ def show_laser(
 
     if show_lineout:
         # Create projected lineouts along time and space
-        temporal_lineout = np.sum(F_plot, axis=0) / np.sum(F_plot, axis=0).max()
+        temporal_lineout = xp.sum(F_plot, axis=0) / xp.sum(F_plot, axis=0).max()
         ax.plot(
             (grid.axes[-1] - t_shift) / units["t"]["value"],
             0.15 * temporal_lineout * (extent[3] - extent[2]) + extent[2],
             c=(0.3, 0.3, 0.3),
         )
 
-        spatial_lineout = np.sum(F_plot, axis=1) / np.sum(F_plot, axis=1).max()
+        spatial_lineout = xp.sum(F_plot, axis=1) / xp.sum(F_plot, axis=1).max()
         ax.plot(
             0.15 * spatial_lineout * (extent[1] - extent[0]) + extent[0],
-            np.linspace(extent[2], extent[3], F_plot.shape[0]),
+            xp.linspace(extent[2], extent[3], F_plot.shape[0]),
             c=(0.3, 0.3, 0.3),
         )
 
-    field_max = np.max(F_plot)
+    field_max = xp.max(F_plot)
     vpos = 0.98
     if envelope_type == "intensity":
         field_max_label = r"$I_{max}$ = %.2e $W/cm^2$" % (field_max)

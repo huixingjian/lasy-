@@ -75,7 +75,7 @@ class LaguerreGaussianTransverseProfile(TransverseProfile):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
-    >>> import numpy as np
+    >>> from lasy.backend import xp
     >>> from lasy.profiles.transverse.laguerre_gaussian_profile import (
     ...     LaguerreGaussianTransverseProfile,
     ... )
