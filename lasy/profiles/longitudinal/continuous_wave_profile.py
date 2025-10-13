@@ -1,5 +1,5 @@
 from .longitudinal_profile import LongitudinalProfile
-
+from lasy.backend import xp
 
 class ContinuousWaveProfile(LongitudinalProfile):
     r"""
@@ -36,4 +36,4 @@ class ContinuousWaveProfile(LongitudinalProfile):
             Contains the value of the longitudinal envelope at the
             specified points. This array has the same shape as the array t.
         """
-        return np.ones_like(t + 0j)
+        return xp.ones_like(t + 0j)

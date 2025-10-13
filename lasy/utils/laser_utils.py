@@ -48,7 +48,7 @@ def compute_laser_energy(dim, grid):
         energy = ((dV * epsilon_0) * abs(envelope) ** 2).sum()
     else:  # dim == "rt":
         energy = (
-            dV[np.newaxis, :, np.newaxis] * epsilon_0 * abs(envelope[:, :, :]) ** 2
+            dV[xp.newaxis, :, xp.newaxis] * epsilon_0 * abs(envelope[:, :, :]) ** 2
         ).sum()
 
     if grid.is_envelope:
@@ -137,7 +137,7 @@ def normalize_peak_intensity(peak_intensity, grid):
         if input_peak_intensity == 0.0:
             print("Field is zero everywhere, normalization will be skipped")
         else:
-            field *= np.sqrt(peak_intensity / input_peak_intensity)
+            field *= xp.sqrt(peak_intensity / input_peak_intensity)
             grid.set_temporal_field(field)
 
 
@@ -162,7 +162,7 @@ def normalize_peak_fluence(peak_fluence, grid):
         if input_peak_fluence == 0.0:
             print("Field is zero everywhere, normalization will be skipped")
         else:
-            field *= np.sqrt(peak_fluence / input_peak_fluence)
+            field *= xp.sqrt(peak_fluence / input_peak_fluence)
             grid.set_temporal_field(field)
 
 
@@ -182,12 +182,12 @@ def normalize_average_intensity(average_intensity, grid):
     """
     if average_intensity is not None:
         field = grid.get_temporal_field()
-        intensity = np.abs(epsilon_0 * field**2 / 2 * c)
+        intensity = xp.abs(epsilon_0 * field**2 / 2 * c)
         input_average_intensity = intensity.mean()
         if input_average_intensity == 0.0:
             print("Field is zero everywhere, normalization will be skipped")
         else:
-            field *= np.sqrt(average_intensity / input_average_intensity)
+            field *= xp.sqrt(average_intensity / input_average_intensity)
             grid.set_temporal_field(field)
 
 
@@ -220,7 +220,7 @@ def normalize_peak_power(dim, peak_power, grid):
             print("Field is zero everywhere, normalization will be skipped")
         else:
             field = grid.get_temporal_field()
-            grid.set_temporal_field(field * np.sqrt(peak_power / input_peak_power))
+            grid.set_temporal_field(field * xp.sqrt(peak_power / input_peak_power))
 
 
 def get_laser_power(dim, grid):
@@ -246,7 +246,7 @@ def get_laser_power(dim, grid):
         The instantaneous laser power along the temporal axis.
     """
     field = grid.get_temporal_field()
-    intensity = np.abs(epsilon_0 * field**2 / 2 * c)
+    intensity = xp.abs(epsilon_0 * field**2 / 2 * c)
     dz = grid.dx[-1] * c
     unit_area = get_grid_cell_volume(grid, dim) / dz
     power = intensity.sum(axis=tuple(range(intensity.ndim - 1))) * unit_area
@@ -269,8 +269,8 @@ def get_laser_fluence(grid):
         The fluence of the laser pulse in space.
     """
     field = grid.get_temporal_field()
-    intensity = np.abs(epsilon_0 * field**2 / 2 * c)
-    fluence = np.squeeze(np.sum(intensity, axis=-1) * grid.dx[-1])
+    intensity = xp.abs(epsilon_0 * field**2 / 2 * c)
+    fluence = xp.squeeze(xp.sum(intensity, axis=-1) * grid.dx[-1])
 
     return fluence
 
@@ -439,8 +439,8 @@ def get_spectrum(
     ordering : string (optional)
         Order of the frequency array and corresponding spectrum.
         Options are:
-        - ``"zero_center"``: np.fft.fftshift is applied so the frequency array is monotonous with 0 at the center.
-        - ``"zero_first"``: The frequency array starts with positive frequencies, and negative frequencies are at the end. The array is not monotonous. This is the default with np.fft.ifft.
+        - ``"zero_center"``: xp.fft.fftshift is applied so the frequency array is monotonous with 0 at the center.
+        - ``"zero_first"``: The frequency array starts with positive frequencies, and negative frequencies are at the end. The array is not monotonous. This is the default with xp.fft.ifft.
 
     Returns
     -------
@@ -451,7 +451,7 @@ def get_spectrum(
         Array with the angular frequencies of the spectrum.
     """
     spectral_field, omega = grid.get_spectral_field()
-    # multiply by the number of points due to np.fft.fft normalization
+    # multiply by the number of points due to xp.fft.fft normalization
     spectral_field *= grid.npoints[-1]
 
     # Get spectrum.
@@ -482,12 +482,12 @@ def get_spectrum(
         if dim == "xyt":
             spectrum = xp.sum(spectrum * dV / dz, axis=(0, 1))
         else:
-            spectrum = np.sum(spectrum[0] * dV[:, np.newaxis] / dz, axis=0)
+            spectrum = xp.sum(spectrum[0] * dV[:, xp.newaxis] / dz, axis=0)
 
     assert ordering in ["zero_first", "zero_center"]
     if ordering == "zero_center":
-        omega = np.fft.fftshift(omega, axes=-1)
-        spectrum = np.fft.fftshift(spectrum, axes=-1)
+        omega = xp.fft.fftshift(omega, axes=-1)
+        spectrum = xp.fft.fftshift(spectrum, axes=-1)
 
     # If the user specified a frequency range, interpolate into it.
     if method in ["sum", "on_axis"] and range is not None:
@@ -748,7 +748,7 @@ def field_to_envelope(grid, dim, omega0=None, phase_unwrap_nd=False):
     # Hilbert transform
     field = hilbert_transform(grid.get_temporal_field())
     # Remove carrier frequency
-    field *= np.exp(1j * omg0 * grid.axes[-1])
+    field *= xp.exp(1j * omg0 * grid.axes[-1])
     # Store envelope
     grid.set_is_envelope(True)
     grid.set_temporal_field(field)
@@ -854,9 +854,9 @@ def create_grid(array, axes, dim, is_envelope=True, position=0.0):
         hi = (axes["x"][-1], axes["y"][-1], axes["t"][-1])
         npoints = (axes["x"].size, axes["y"].size, axes["t"].size)
         grid = Grid(dim, lo, hi, npoints, is_envelope=is_envelope, position=position)
-        assert np.allclose(grid.axes[0], axes["x"])
-        assert np.allclose(grid.axes[1], axes["y"])
-        assert np.allclose(grid.axes[2], axes["t"], rtol=1.0e-14)
+        assert xp.allclose(grid.axes[0], axes["x"])
+        assert xp.allclose(grid.axes[1], axes["y"])
+        assert xp.allclose(grid.axes[2], axes["t"], rtol=1.0e-14)
         assert array.ndim == 3, "Input array should be of dimension 3 [x, y, time]"
         grid.set_temporal_field(array)
     else:  # dim == "rt":
@@ -872,8 +872,8 @@ def create_grid(array, axes, dim, is_envelope=True, position=0.0):
             n_azimuthal_modes=nm,
             is_envelope=is_envelope,
         )
-        assert np.all(grid.axes[0] == axes["r"])
-        assert np.allclose(grid.axes[1], axes["t"], rtol=1.0e-14)
+        assert xp.all(grid.axes[0] == axes["r"])
+        assert xp.allclose(grid.axes[1], axes["t"], rtol=1.0e-14)
         assert array.ndim == 3, (
             "Input array should be of dimension 3 [modes, radius, time]"
         )
@@ -1090,19 +1090,19 @@ def get_w0(grid, dim):
     field = grid.get_temporal_field()
     if dim == "xyt":
         Nx, Ny, Nt = field.shape
-        A2 = (np.abs(field[Nx // 2 - 1, :, :]) ** 2).sum(-1)
+        A2 = (xp.abs(field[Nx // 2 - 1, :, :]) ** 2).sum(-1)
         ax = grid.axes[1]
     else:
-        A2 = (np.abs(field[0, :, :]) ** 2).sum(-1)
+        A2 = (xp.abs(field[0, :, :]) ** 2).sum(-1)
         ax = grid.axes[0]
         if ax[0] > 0:
-            A2 = np.r_[A2[::-1], A2]
-            ax = np.r_[-ax[::-1], ax]
+            A2 = xp.r_[A2[::-1], A2]
+            ax = xp.r_[-ax[::-1], ax]
         else:
-            A2 = np.r_[A2[::-1][:-1], A2]
-            ax = np.r_[-ax[::-1][:-1], ax]
+            A2 = xp.r_[A2[::-1][:-1], A2]
+            ax = xp.r_[-ax[::-1][:-1], ax]
 
-    sigma = 2 * np.sqrt(np.average(ax**2, weights=A2))
+    sigma = 2 * xp.sqrt(xp.average(ax**2, weights=A2))
 
     return sigma
 
@@ -1129,12 +1129,12 @@ def get_phi2(dim, grid):
     phi2 : Second derivative of temporal phase :math:`\Phi^{(2)} = \frac{d\omega_0}{dt} = \frac{d^2\Phi(t)}{dt^2}` in (second^-2)
     """
     env = grid.get_temporal_field()
-    env_abs2 = np.abs(env**2)
+    env_abs2 = xp.abs(env**2)
     # Calculate group-delayed dispersion
-    phi_envelop = np.unwrap(np.angle(env), axis=2)
-    pphi_pt = np.gradient(phi_envelop, grid.dx[-1], axis=2)
-    pphi_pt2 = np.gradient(pphi_pt, grid.dx[-1], axis=2)
-    phi2 = np.average(pphi_pt2, weights=env_abs2)
+    phi_envelop = xp.unwrap(xp.angle(env), axis=2)
+    pphi_pt = xp.gradient(phi_envelop, grid.dx[-1], axis=2)
+    pphi_pt2 = xp.gradient(pphi_pt, grid.dx[-1], axis=2)
+    phi2 = xp.average(pphi_pt2, weights=env_abs2)
 
     return phi2
 
@@ -1165,28 +1165,28 @@ def get_zeta(dim, grid, k0):
     w0 = get_w0(grid, dim)
     tau = 2 * get_duration(grid, dim)
     env_spec, spectral_axis = grid.get_spectral_field()
-    env_spec_abs2 = np.abs(env_spec**2)
+    env_spec_abs2 = xp.abs(env_spec**2)
     # Get the spectral axis
     omega = spectral_axis + k0 * c
     # Calculate dx0 and dy0 in (x,y,omega) space
-    weight_x_3d = np.transpose(env_spec_abs2, (2, 1, 0))
-    weight_y_3d = np.transpose(env_spec_abs2, (2, 0, 1))
-    weight_x_2d = np.sum(weight_x_3d, axis=2)
-    weight_y_2d = np.sum(weight_y_3d, axis=2)
+    weight_x_3d = xp.transpose(env_spec_abs2, (2, 1, 0))
+    weight_y_3d = xp.transpose(env_spec_abs2, (2, 0, 1))
+    weight_x_2d = xp.sum(weight_x_3d, axis=2)
+    weight_y_2d = xp.sum(weight_y_3d, axis=2)
     # Calculate xda and yda, avoiding division by zero
-    xda = np.where(
-        weight_x_2d != 0, np.sum(grid.axes[0] * weight_x_3d, axis=2) / weight_x_2d, 0
+    xda = xp.where(
+        weight_x_2d != 0, xp.sum(grid.axes[0] * weight_x_3d, axis=2) / weight_x_2d, 0
     )
-    yda = np.where(
-        weight_y_2d != 0, np.sum(grid.axes[1] * weight_y_3d, axis=2) / weight_y_2d, 0
+    yda = xp.where(
+        weight_y_2d != 0, xp.sum(grid.axes[1] * weight_y_3d, axis=2) / weight_y_2d, 0
     )
     # Calculate spatial chirp zeta
-    derivative_x_zeta = np.gradient(xda, omega, axis=0)
-    derivative_y_zeta = np.gradient(yda, omega, axis=0)
-    weight_x_2d = np.mean(env_spec_abs2, axis=0)
-    weight_y_2d = np.mean(env_spec_abs2, axis=1)
-    zeta_x = np.average(derivative_x_zeta.T, weights=weight_x_2d)
-    zeta_y = np.average(derivative_y_zeta.T, weights=weight_y_2d)
+    derivative_x_zeta = xp.gradient(xda, omega, axis=0)
+    derivative_y_zeta = xp.gradient(yda, omega, axis=0)
+    weight_x_2d = xp.mean(env_spec_abs2, axis=0)
+    weight_y_2d = xp.mean(env_spec_abs2, axis=1)
+    zeta_x = xp.average(derivative_x_zeta.T, weights=weight_x_2d)
+    zeta_y = xp.average(derivative_y_zeta.T, weights=weight_y_2d)
     nu_x = 4 * zeta_x / (w0**2 * tau**2 + 4 * zeta_x**2)
     nu_y = 4 * zeta_y / (w0**2 * tau**2 + 4 * zeta_y**2)
     return [zeta_x, zeta_y], [nu_x, nu_y]
@@ -1216,19 +1216,19 @@ def get_beta(dim, grid, k0):
     """
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
     env_spec, spectral_axis = grid.get_spectral_field()
-    env_spec_abs2 = np.abs(env_spec**2)
+    env_spec_abs2 = xp.abs(env_spec**2)
     # Get the spectral axis
     omega = spectral_axis + k0 * c
     # Calculate angular dispersion beta
-    phi_envelop_abs = np.unwrap(
-        np.array(np.arctan2(env_spec.imag, env_spec.real)), axis=2
+    phi_envelop_abs = xp.unwrap(
+        xp.array(xp.arctan2(env_spec.imag, env_spec.real)), axis=2
     )
-    angle_x = np.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
-    angle_y = np.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
-    derivative_x_beta = np.gradient(angle_y, omega, axis=2)
-    derivative_y_beta = np.gradient(angle_x, omega, axis=2)
-    beta_x = np.average(derivative_x_beta, weights=env_spec_abs2)
-    beta_y = np.average(derivative_y_beta, weights=env_spec_abs2)
+    angle_x = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
+    angle_y = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
+    derivative_x_beta = xp.gradient(angle_y, omega, axis=2)
+    derivative_y_beta = xp.gradient(angle_x, omega, axis=2)
+    beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
+    beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
     return [beta_x, beta_y]
 
 
@@ -1257,13 +1257,13 @@ def get_pft(dim, grid):
     """
     assert dim == "xyt", "No pulse front tilt for cylindrical symmetry."
     env = grid.get_temporal_field()
-    env_abs2 = np.abs(env**2)
-    weight_xy_2d = np.mean(env_abs2, axis=2)
-    z_centroids = np.sum(grid.axes[2] * env_abs2, axis=2) / np.sum(env_abs2, axis=2)
-    derivative_x_pft = np.gradient(z_centroids, axis=0) / grid.dx[0]
-    derivative_y_pft = np.gradient(z_centroids, axis=1) / grid.dx[1]
-    pft_x = np.average(derivative_x_pft, weights=weight_xy_2d)
-    pft_y = np.average(derivative_y_pft, weights=weight_xy_2d)
+    env_abs2 = xp.abs(env**2)
+    weight_xy_2d = xp.mean(env_abs2, axis=2)
+    z_centroids = xp.sum(grid.axes[2] * env_abs2, axis=2) / xp.sum(env_abs2, axis=2)
+    derivative_x_pft = xp.gradient(z_centroids, axis=0) / grid.dx[0]
+    derivative_y_pft = xp.gradient(z_centroids, axis=1) / grid.dx[1]
+    pft_x = xp.average(derivative_x_pft, weights=weight_xy_2d)
+    pft_y = xp.average(derivative_y_pft, weights=weight_xy_2d)
     return [pft_x, pft_y]
 
 
@@ -1290,12 +1290,12 @@ def get_propation_angle(dim, grid, k0):
     """
     assert dim == "xyt", "Propagation is always on-axis for axis-symmetric dimension."
     env = grid.get_temporal_field()
-    env_abs2 = np.abs(env**2)
-    phi_envelop_abs = np.unwrap(np.angle(env), axis=2)
-    pphi_px = np.gradient(phi_envelop_abs, grid.dx[1], axis=1)
-    pphi_py = np.gradient(phi_envelop_abs, grid.dx[0], axis=0)
-    angle_x = np.average(pphi_px, weights=env_abs2) / k0
-    angle_y = np.average(pphi_py, weights=env_abs2) / k0
+    env_abs2 = xp.abs(env**2)
+    phi_envelop_abs = xp.unwrap(xp.angle(env), axis=2)
+    pphi_px = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1)
+    pphi_py = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+    angle_x = xp.average(pphi_px, weights=env_abs2) / k0
+    angle_y = xp.average(pphi_py, weights=env_abs2) / k0
     return [angle_x, angle_y]
 
 
@@ -1342,8 +1342,8 @@ def get_spectral_phase(grid, dim, omega0, method="sum", ordering="zero_center"):
     ordering : string (optional)
         Order of the frequency array and corresponding spectral phase.
         Options are:
-        - ``"zero_center"``: np.fft.fftshift is applied so the frequency array is monotonous with 0 at the center.
-        - ``"zero_first"``: The frequency array starts with positive frequencies, and negative frequencies are at the end. The array is not monotonous. This is the default with np.fft.ifft.
+        - ``"zero_center"``: xp.fft.fftshift is applied so the frequency array is monotonous with 0 at the center.
+        - ``"zero_first"``: The frequency array starts with positive frequencies, and negative frequencies are at the end. The array is not monotonous. This is the default with xp.fft.ifft.
 
 
     Returns
@@ -1367,9 +1367,9 @@ def get_spectral_phase(grid, dim, omega0, method="sum", ordering="zero_center"):
         if dim == "xyt":
             Nx = grid.npoints[0]
             Ny = grid.npoints[1]
-            phase = np.angle(field_spectral[Nx // 2, Ny // 2, :])
+            phase = xp.angle(field_spectral[Nx // 2, Ny // 2, :])
         else:  # dim=='rt'
-            phase = np.angle(field_spectral[0, 0, :])
+            phase = xp.angle(field_spectral[0, 0, :])
 
     # if method=='sum' integrate the field spatially before getting the phase from it
     else:  # method='sum'
@@ -1377,21 +1377,21 @@ def get_spectral_phase(grid, dim, omega0, method="sum", ordering="zero_center"):
         dV = get_grid_cell_volume(grid, dim)
 
         if dim == "xyt":
-            summed_field = np.sum(field_spectral * dV, axis=(0, 1))
+            summed_field = xp.sum(field_spectral * dV, axis=(0, 1))
         else:  # dim=='rt'
-            summed_field = np.sum(field_spectral * dV[None, :, None], axis=(0, 1))
+            summed_field = xp.sum(field_spectral * dV[None, :, None], axis=(0, 1))
 
-        phase = np.angle(summed_field)
+        phase = xp.angle(summed_field)
 
     # create omega array (angular frequencies)
     assert ordering in ["zero_first", "zero_center"]
     if ordering == "zero_center":
-        omega = np.fft.fftshift(omega, axes=-1)
-        phase = np.fft.fftshift(phase, axes=-1)
+        omega = xp.fft.fftshift(omega, axes=-1)
+        phase = xp.fft.fftshift(phase, axes=-1)
     omega += omega0
 
     # unwrap the phase
-    phase = np.unwrap(phase)
+    phase = xp.unwrap(phase)
 
     # return the phase and omega arrays
     return phase, omega
@@ -1449,9 +1449,9 @@ def get_dispersion(grid, dim, omega0, order, omega_eval=None, method="sum"):
     phase, omega = get_spectral_phase(grid, dim, method=method, omega0=omega0)
 
     # calculate the n-th order derivative wrt. angular frequency
-    disp = np.gradient(phase, omega, axis=-1)
+    disp = xp.gradient(phase, omega, axis=-1)
     for _ in range(order - 1):
-        disp = np.gradient(disp, omega, axis=-1)
+        disp = xp.gradient(disp, omega, axis=-1)
 
     # get the dispersion at the specified frequency of the envelope's frequency
     omega_eval = omega_eval if omega_eval is not None else omega0
@@ -1513,19 +1513,19 @@ def get_bandwidth(grid, dim, method="sum", level=None, unit="rad/s", omega0=None
     # Choose axis along which to calculate the bandwidth
     if unit == "m":  # convert omega to wavelength
         assert omega0, "'omega0' must be provided to calculate bandwidth in meters."
-        width_axis = 2 * np.pi * c / (omega + omega0)
+        width_axis = 2 * xp.pi * c / (omega + omega0)
     else:  # keep omega as that axis
         width_axis = omega
 
     # Calculate weights of each grid cell (amplitude of the field).
     if dim == "xyt":
-        spectral_intensity = np.abs(field) ** 2 * dV
+        spectral_intensity = xp.abs(field) ** 2 * dV
     else:  # dim == "rt":
-        spectral_intensity = np.abs(field) ** 2 * dV[np.newaxis, :, np.newaxis]
+        spectral_intensity = xp.abs(field) ** 2 * dV[xp.newaxis, :, xp.newaxis]
 
     # Selecte the method to calculate the bandwidth
     if method == "sum":
-        spectral_intensity = np.sum(spectral_intensity, axis=(0, 1))
+        spectral_intensity = xp.sum(spectral_intensity, axis=(0, 1))
     else:
         if dim == "xyt":
             spectral_intensity = spectral_intensity[
@@ -1536,24 +1536,24 @@ def get_bandwidth(grid, dim, method="sum", level=None, unit="rad/s", omega0=None
 
     if level:
         # sort omega/wavelength axis and spectral intensity
-        order = np.argsort(width_axis)
+        order = xp.argsort(width_axis)
         width_axis = width_axis[order]
         spectral_intensity = spectral_intensity[order]
 
         # find intensity threshold
-        threshold = np.max(spectral_intensity) * level
+        threshold = xp.max(spectral_intensity) * level
 
         # find indices that mark the range in which spectral intensity >= threshold
-        idcs = np.where(spectral_intensity >= threshold)[0]
+        idcs = xp.where(spectral_intensity >= threshold)[0]
         i_min, i_max = idcs[0], idcs[-1]
 
         # calculate positions of lower and upper bounds
-        lower_bound = np.interp(
+        lower_bound = xp.interp(
             threshold,
             spectral_intensity[i_min - 1 : i_min + 1],
             width_axis[i_min - 1 : i_min + 1],
         )
-        upper_bound = np.interp(
+        upper_bound = xp.interp(
             threshold,
             spectral_intensity[i_max : i_max + 2][::-1],
             width_axis[i_max : i_max + 2][::-1],
