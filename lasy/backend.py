@@ -4,12 +4,18 @@ try:
     use_cupy = True
 
     def to_cpu(arr):
+        """
+        convert array from cupy to numpy
+        """
         if isinstance(arr, xp.ndarray):
             return xp.asnumpy(arr)
         else:
             return arr
 
     def to_gpu(arr):
+        """
+        convert array from numpy to cupy
+        """
         if not isinstance(arr, xp.ndarray):
             return xp.asarray(arr)
         else:
@@ -21,9 +27,15 @@ except ImportError:
     use_cupy = False
 
     def to_cpu(arr):
+        """
+        convert array from cupy to numpy
+        """
         return arr
 
     def to_gpu(arr):
+        """
+        convert array from numpy to cupy
+        """
         return arr
 
 

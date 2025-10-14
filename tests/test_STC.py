@@ -8,6 +8,7 @@ Additionally, the correctness is validated by comparing the Gaussian profile wit
 
 import scipy.constants as scc
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.profiles.combined_profile import CombinedLongitudinalTransverseProfile
 from lasy.profiles.gaussian_profile import GaussianProfile

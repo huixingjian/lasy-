@@ -55,8 +55,3 @@ def find_d4sigma(img):
     D4sigY = 4 * xp.sqrt(xp.sum(xp.dot(img.T, (y - y0) ** 2)) / img_tot)
 
     return D4sigX, D4sigY
-
-
-def array_type(x):
-    dummy = xp.get_array_module(x)  # 'xp' is a standard usage in the community
-    print("Using:", dummy.__name__)
