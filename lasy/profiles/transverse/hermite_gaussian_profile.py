@@ -82,7 +82,7 @@ class HermiteGaussianTransverseProfile(TransverseProfile):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
-    >>> from lasy.backend import xp
+    >>> from lasy.backend import xp, to_cpu
     >>> from lasy.profiles.transverse.hermite_gaussian_profile import (
     ...     HermiteGaussianTransverseProfile,
     ... )
@@ -103,11 +103,11 @@ class HermiteGaussianTransverseProfile(TransverseProfile):
     ...         )
     ...         intensity = xp.abs(transverse_profile.evaluate(X,Y))**2
     ...         vmax_intensity = xp.max(intensity)
-    >>>         ax[m,n].imshow(intensity,extent=extent,cmap='bone_r',vmin=0,vmax=vmax_intensity)
+    >>>         ax[m,n].imshow(to_cpu(intensity),extent=extent,cmap='bone_r',vmin=0,vmax=vmax_intensity)
     >>>         ax[m,n].set_title('Inten: m,n = %i,%i' %(m,n))
     >>>         phase = xp.angle(transverse_profile.evaluate(X,Y))
     ...         vmax_phase = xp.max(xp.abs(phase))
-    >>>         ax[m,n+3].imshow(phase,extent=extent,cmap='seismic',vmin=-vmax_phase,vmax=vmax_phase)
+    >>>         ax[m,n+3].imshow(to_cpu(phase),extent=extent,cmap='seismic',vmin=-vmax_phase,vmax=vmax_phase)
     >>>         ax[m,n+3].set_title('Phase: m,n = %i,%i' %(m,n))
     >>>         if m==2:
     >>>             ax[m,n].set_xlabel("x (µm)")

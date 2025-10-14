@@ -75,7 +75,7 @@ class LaguerreGaussianTransverseProfile(TransverseProfile):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
-    >>> from lasy.backend import xp
+    >>> from lasy.backend import xp, to_cpu
     >>> from lasy.profiles.transverse.laguerre_gaussian_profile import (
     ...     LaguerreGaussianTransverseProfile,
     ... )
@@ -95,11 +95,11 @@ class LaguerreGaussianTransverseProfile(TransverseProfile):
     ...         )
     ...         intensity = xp.abs(transverse_profile.evaluate(X,Y))**2
     ...         vmax_intensity = xp.max(intensity)
-    >>>         ax[p,m].imshow(intensity,extent=extent,cmap='bone_r',vmin=0,vmax=vmax_intensity)
+    >>>         ax[p,m].imshow(to_cpu(intensity),extent=extent,cmap='bone_r',vmin=0,vmax=vmax_intensity)
     >>>         ax[p,m].set_title('Inten: p,m = %i,%i' %(p,m))
     >>>         phase = xp.angle(transverse_profile.evaluate(X,Y))
     ...         vmax_phase = xp.max(xp.abs(phase))
-    >>>         ax[p,m+3].imshow(phase,extent=extent,cmap='seismic',vmin=-vmax_phase,vmax=vmax_phase)
+    >>>         ax[p,m+3].imshow(to_cpu(phase),extent=extent,cmap='seismic',vmin=-vmax_phase,vmax=vmax_phase)
     >>>         ax[p,m+3].set_title('Phase: p,m = %i,%i' %(p,m))
     >>>         if p==2:
     >>>             ax[p,m].set_xlabel("x (µm)")

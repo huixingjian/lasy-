@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from lasy.backend import xp
+from lasy.backend import xp, to_cpu
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.constants import c, epsilon_0
 
@@ -156,7 +156,7 @@ def show_laser(
     fig, ax = plt.subplots()
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.075)
-    im = ax.imshow(F_plot, extent=extent, aspect="auto", origin="lower", **kw)
+    im = ax.imshow(to_cpu(F_plot), extent=extent, aspect="auto", origin="lower", **kw)
     cb = fig.colorbar(im, cax=cax)
     cb.set_label(cbar_label)
     ax.set_xlabel(r"t " + r"($%s$)" % units["t"]["label"])
@@ -190,15 +190,15 @@ def show_laser(
         # Create projected lineouts along time and space
         temporal_lineout = xp.sum(F_plot, axis=0) / xp.sum(F_plot, axis=0).max()
         ax.plot(
-            (grid.axes[-1] - t_shift) / units["t"]["value"],
-            0.15 * temporal_lineout * (extent[3] - extent[2]) + extent[2],
+            to_cpu((grid.axes[-1] - t_shift) / units["t"]["value"]),
+            to_cpu(0.15 * temporal_lineout * (extent[3] - extent[2]) + extent[2]),
             c=(0.3, 0.3, 0.3),
         )
 
         spatial_lineout = xp.sum(F_plot, axis=1) / xp.sum(F_plot, axis=1).max()
         ax.plot(
-            0.15 * spatial_lineout * (extent[1] - extent[0]) + extent[0],
-            xp.linspace(extent[2], extent[3], F_plot.shape[0]),
+            to_cpu(0.15 * spatial_lineout * (extent[1] - extent[0]) + extent[0]),
+            to_cpu(xp.linspace(extent[2], extent[3], F_plot.shape[0])),
             c=(0.3, 0.3, 0.3),
         )
 

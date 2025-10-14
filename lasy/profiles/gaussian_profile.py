@@ -82,6 +82,7 @@ class GaussianProfile(Profile):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
+    >>> from lasy.backend import xp, to_cpu
     >>> from lasy.laser import Laser
     >>> from lasy.profiles.gaussian_profile import GaussianProfile
     >>> from lasy.utils.laser_utils import get_full_field
@@ -109,7 +110,7 @@ class GaussianProfile(Profile):
     >>> tmin, tmax, rmin, rmax = extent
     >>> vmax = xp.abs(E_rt).max()
     >>> plt.imshow(
-    ...     E_rt,
+    ...     to_cpu(E_rt),
     ...     origin="lower",
     ...     aspect="auto",
     ...     vmax=vmax,

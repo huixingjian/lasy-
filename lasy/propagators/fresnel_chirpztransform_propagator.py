@@ -60,7 +60,6 @@ class FresnelChirpZPropagator(Propagator):
 
     Examples
     --------
-    >>> import matplotlib.pyplot as plt
     >>> from lasy.laser import Laser
     >>> from lasy.profiles.gaussian_profile import GaussianProfile
     >>> from lasy.optical_elements import ParabolicMirror
