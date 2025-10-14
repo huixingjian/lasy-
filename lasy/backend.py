@@ -26,4 +26,5 @@ except ImportError:
     def to_gpu(arr):
         return arr
 
+
 __all__ = ["use_cupy", "xp", "to_cpu", "to_gpu"]

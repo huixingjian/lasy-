@@ -1,4 +1,4 @@
-from lasy.backend import xp, to_gpu
+from lasy.backend import to_gpu, xp
 
 from .fft_wrapper import fft, frequency_axis
 
