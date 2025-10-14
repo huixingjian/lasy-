@@ -14,12 +14,6 @@ from lasy.backend import use_cupy, xp
 
 from .propagator import Propagator
 
-# Select backend
-if use_cupy:
-    backend = "CU"
-else:
-    backend = "NP"
-
 
 class AxipropPropagator(Propagator):
     """
@@ -110,7 +104,7 @@ class AxipropPropagator(Propagator):
                         r_axis_new=grid_out.axes[0],
                         mode=m,
                         verbose=verbose,
-                        backend=self.backend,
+                        backend="CU" if use_cupy else "NP",
                     )
                 )
 
@@ -152,7 +146,7 @@ class AxipropPropagator(Propagator):
                 y_axis=container_in.y,
                 kz_axis=container_in.k_freq,
                 verbose=verbose,
-                backend=self.backend,
+                backend="CU" if use_cupy else "NP",
             )
 
     def propagate(
@@ -430,7 +424,7 @@ class AxipropFresnelPropagator(Propagator):
                         r_axis_new=grid_out.axes[0],
                         mode=m,
                         verbose=verbose,
-                        backend=self.backend,
+                        backend="CU" if use_cupy else "NP",
                     )
                 )
 
@@ -481,7 +475,7 @@ class AxipropFresnelPropagator(Propagator):
                 y_axis_new=grid_out.axes[1],
                 kz_axis=container_in.k_freq,
                 verbose=verbose,
-                backend=self.backend,
+                backend="CU" if use_cupy else "NP",
             )
 
     def propagate(
