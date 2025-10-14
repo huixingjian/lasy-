@@ -104,7 +104,7 @@ gdd_3d, gdd0_3d = get_dispersion(
 [zeta_x, zeta_y], [nu_x, nu_y] = get_zeta(
     laser_3d.dim, laser_3d.grid, 2.0 * xp.pi / 0.6e-6
 )
-[beta_x, beta_y] = get_beta(laser_3d.dim, laser_3d.grid, 2.0 * xp.pi / 0.6e-6)
+[_, beta_y] = get_beta(laser_3d.dim, laser_3d.grid, 2.0 * xp.pi / 0.6e-6)
 
 assert (err_real + err_imag) < 1e-6
 

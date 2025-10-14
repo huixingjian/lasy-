@@ -12,7 +12,7 @@ try:
     def to_gpu(arr):
         if not isinstance(arr, xp.ndarray):
             return xp.asarray(arr)
-        else
+        else:
             return arr
 
 except ImportError:

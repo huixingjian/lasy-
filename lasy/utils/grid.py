@@ -230,7 +230,7 @@ class Grid:
         else:
             raise ValueError("Both temporal and spectral fields are invalid")
 
-        return self.spectral_field.copy(), self.spectral_axis.copy())
+        return self.spectral_field.copy(), self.spectral_axis.copy()
 
     def temporal2spectral_fft(self):
         """
