@@ -1,8 +1,9 @@
 import copy
 
-from lasy.backend import xp
 from scipy.constants import c
 from scipy.signal import zoom_fft
+
+from lasy.backend import xp
 
 from .propagator import Propagator
 

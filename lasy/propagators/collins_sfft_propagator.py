@@ -1,9 +1,9 @@
 from copy import deepcopy
 
-from lasy.backend import xp
 from numpy.fft import fftfreq, fftshift
 from scipy.constants import c, epsilon_0
 
+from lasy.backend import xp
 from lasy.utils.fft_wrapper import fft
 from lasy.utils.laser_utils import get_w0
 

@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
-from lasy.backend import xp, to_cpu
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.constants import c, epsilon_0
+
+from lasy.backend import to_cpu, xp
 
 from .laser_utils import field_to_vector_potential, get_duration, get_w0
 

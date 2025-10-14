@@ -1,9 +1,9 @@
 import copy
 
 import matplotlib.pyplot as plt
-from lasy.backend import xp, to_cpu
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from lasy.backend import to_cpu, xp
 from lasy.laser import Laser
 from lasy.profiles.gaussian_profile import GaussianProfile
 from lasy.utils.phase_retrieval import gerchberg_saxton_algo
@@ -75,7 +75,9 @@ def addColorbar(im, ax, label=None):
 
 
 field = laser.grid.get_temporal_field()
-im0 = ax[0, 0].imshow(to_cpu(xp.abs(field[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd")
+im0 = ax[0, 0].imshow(
+    to_cpu(xp.abs(field[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd"
+)
 addColorbar(im0, ax[0, 0], "Intensity (norm.)")
 ax[0, 0].set_title("Inten. z = 0.0 mm")
 ax[0, 0].set_xlabel("x ($\mu m$)")
@@ -99,7 +101,9 @@ laser_calc.propagate(propDist)
 
 field_calc = laser_calc.grid.get_temporal_field()
 im2 = ax[1, 0].imshow(
-    to_cpu(xp.abs(xp.abs(field[:, :, tIndx]) ** 2 - xp.abs(field_calc[:, :, tIndx]) ** 2)),
+    to_cpu(
+        xp.abs(xp.abs(field[:, :, tIndx]) ** 2 - xp.abs(field_calc[:, :, tIndx]) ** 2)
+    ),
     extent=extent,
     cmap="PuRd",
 )
@@ -124,7 +128,9 @@ ax[1, 1].set_ylabel("y ($\mu m$)")
 addColorbar(im3, ax[1, 1], "Phase (rad.)")
 
 field_bw = laserBackward.grid.get_temporal_field()
-im4 = ax[0, 2].imshow(to_cpu(xp.abs(field_bw[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd")
+im4 = ax[0, 2].imshow(
+    to_cpu(xp.abs(field_bw[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd"
+)
 addColorbar(im4, ax[0, 2], "Intensity (norm.)")
 ax[0, 2].set_title("Inten. z = %.1f mm" % (-propDist * 1e3))
 ax[0, 2].set_xlabel("x ($\mu m$)")
@@ -152,12 +158,16 @@ ax[0, 4].set_xlabel("x ($\mu m$)")
 ax[0, 4].set_ylabel("y ($\mu m$)")
 
 field_fw = laserForward.grid.get_temporal_field()
-im7 = ax[1, 2].imshow(to_cpu(xp.abs(field_fw[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd")
+im7 = ax[1, 2].imshow(
+    to_cpu(xp.abs(field_fw[:, :, tIndx]) ** 2), extent=extent, cmap="PuRd"
+)
 addColorbar(im7, ax[1, 2], "Intensity (norm.)")
 ax[1, 2].set_title("Inten. z = %.1f mm" % (propDist * 1e3))
 ax[1, 2].set_xlabel("x ($\mu m$)")
 ax[1, 2].set_ylabel("y ($\mu m$)")
-im8 = ax[1, 3].imshow(to_cpu(xp.angle(field_fw[:, :, tIndx])), extent=extent, cmap="coolwarm")
+im8 = ax[1, 3].imshow(
+    to_cpu(xp.angle(field_fw[:, :, tIndx])), extent=extent, cmap="coolwarm"
+)
 addColorbar(im8, ax[1, 3], "Phase (rad.)")
 ax[1, 3].set_title("Phase z = %.1f mm" % (propDist * 1e3))
 ax[1, 3].set_xlabel("x ($\mu m$)")

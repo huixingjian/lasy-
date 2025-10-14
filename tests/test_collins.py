@@ -1,6 +1,6 @@
-from lasy.backend import xp
 from scipy.constants import c
 
+from lasy.backend import xp
 from lasy.laser import Laser
 from lasy.profiles import GaussianProfile
 from lasy.propagators import ABCD, CollinsSFFTPropagator

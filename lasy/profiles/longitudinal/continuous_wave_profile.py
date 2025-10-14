@@ -1,5 +1,7 @@
-from .longitudinal_profile import LongitudinalProfile
 from lasy.backend import xp
+
+from .longitudinal_profile import LongitudinalProfile
+
 
 class ContinuousWaveProfile(LongitudinalProfile):
     r"""
