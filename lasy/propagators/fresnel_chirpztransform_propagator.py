@@ -1,8 +1,8 @@
 import copy
 
-from lasy.backend import xp, xp_sci
-
 from scipy.constants import c
+
+from lasy.backend import xp, xp_sci
 
 from .propagator import Propagator
 

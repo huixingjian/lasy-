@@ -10,7 +10,7 @@ from axiprop.lib import (
 from axiprop.utils import import_from_lasy_grid
 from scipy.constants import c
 
-from lasy.backend import to_cpu, use_cupy, xp
+from lasy.backend import use_cupy, xp
 
 from .propagator import Propagator
 
@@ -308,7 +308,9 @@ class AxipropPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
-        container_in = import_from_lasy_grid(grid_in, "xyt", float(omega0), int(nr_boundary))
+        container_in = import_from_lasy_grid(
+            grid_in, "xyt", float(omega0), int(nr_boundary)
+        )
 
         self.update("xyt", omega0, container_in, verbose=verbose)
 
@@ -641,7 +643,9 @@ class AxipropFresnelPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
-        container_in = import_from_lasy_grid(grid_in, "xyt", float(omega0), int(nr_boundary))
+        container_in = import_from_lasy_grid(
+            grid_in, "xyt", float(omega0), int(nr_boundary)
+        )
 
         self.update(distance, "xyt", omega0, container_in, grid_out, verbose)
 

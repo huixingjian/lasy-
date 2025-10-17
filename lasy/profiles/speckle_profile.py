@@ -1,10 +1,10 @@
+import numpy as np
 from scipy.constants import c
 
 from lasy.backend import to_cpu, xp
 
 from .profile import Profile
 
-import numpy as np
 
 def gen_gaussian_time_series(t_num, dt, fwhm, rms_mean):
     """Generate a discrete time series that has gaussian power spectrum.
@@ -316,17 +316,13 @@ class SpeckleProfile(Profile):
         if "SSD" in self.temporal_smoothing_type.upper():
             ssd_time_delay_sum = np.sum(to_cpu(self.ssd_time_delay))
             pm_phase0 = gen_gaussian_time_series(
-                series_time.size
-                + int(ssd_time_delay_sum / self.dt_update)
-                + 2,
+                series_time.size + int(ssd_time_delay_sum / self.dt_update) + 2,
                 self.dt_update,
                 2 * xp.pi * self.ssd_phase_modulation_frequency[0],
                 self.ssd_phase_modulation_amplitude[0],
             )
             pm_phase1 = gen_gaussian_time_series(
-                series_time.size
-                + int(ssd_time_delay_sum / self.dt_update)
-                + 2,
+                series_time.size + int(ssd_time_delay_sum / self.dt_update) + 2,
                 self.dt_update,
                 2 * xp.pi * self.ssd_phase_modulation_frequency[1],
                 self.ssd_phase_modulation_amplitude[1],

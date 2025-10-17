@@ -7,6 +7,7 @@ Additionally, the correctness is validated by comparing the Gaussian profile wit
 """
 
 import scipy.constants as scc
+from numpy.testing import assert_approx_equal
 
 from lasy.backend import xp
 from lasy.laser import Laser
@@ -15,8 +16,6 @@ from lasy.profiles.gaussian_profile import GaussianProfile
 from lasy.profiles.longitudinal import GaussianLongitudinalProfile
 from lasy.profiles.transverse import GaussianTransverseProfile
 from lasy.utils.laser_utils import get_beta, get_dispersion, get_zeta
-
-from numpy.testing import assert_approx_equal
 
 wavelength = 0.6e-6  # m
 pol = (1, 0)

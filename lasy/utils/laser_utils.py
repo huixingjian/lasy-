@@ -330,7 +330,9 @@ def get_full_field(laser, theta=0, slice=0, slice_axis="x", Nt=None):
 
         for ir in range(Nr):
             slice_abs = xp.interp(time_axis_new, time_axis, xp.abs(env[ir]))
-            slice_angl = xp.interp(time_axis_new, time_axis, xp.unwrap(xp.angle(env[ir])))
+            slice_angl = xp.interp(
+                time_axis_new, time_axis, xp.unwrap(xp.angle(env[ir]))
+            )
             env_new[ir] = slice_abs * xp.exp(1j * slice_angl)
 
         time_axis = time_axis_new
@@ -877,7 +879,9 @@ def create_grid(array, axes, dim, is_envelope=True, position=0.0):
     return grid
 
 
-def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if use_cupy else "NP"):
+def export_to_z(
+    dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if use_cupy else "NP"
+):
     """
     Export laser pulse to spatial domain from temporal domain (internal LASY representation).
 
@@ -934,7 +938,7 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if 
                     FieldAxprp.k_freq,
                     mode=int(m),
                     backend=backend,
-                    verbose=False
+                    verbose=False,
                 )
             )
 
@@ -947,7 +951,11 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if 
         for i_m in range(grid.azimuthal_modes.size):
             FieldAxprp.import_field(to_cpu(xp.transpose(field[i_m]).copy()))
 
-            field_z[i_m] = prop[i_m].t2z(to_gpu(FieldAxprp.Field_ft), to_gpu(z_axis), z0=z0, t0=t0).T
+            field_z[i_m] = (
+                prop[i_m]
+                .t2z(to_gpu(FieldAxprp.Field_ft), to_gpu(z_axis), z0=z0, t0=t0)
+                .T
+            )
 
             field_z[i_m] *= xp.exp(-1j * (z_axis / c + t0) * omega0)
     else:
@@ -971,7 +979,16 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if 
     return field_z
 
 
-def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="CU" if use_cupy else "NP"):
+def import_from_z(
+    dim,
+    grid,
+    omega0,
+    field_z,
+    z_axis,
+    z0=0.0,
+    t0=0.0,
+    backend="CU" if use_cupy else "NP",
+):
     """
     Import laser pulse from spatial domain to temporal domain (internal LASY representation).
 
@@ -1028,7 +1045,7 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="C
                     to_cpu(omega / c),
                     mode=int(m),
                     backend=backend,
-                    verbose=False
+                    verbose=False,
                 )
             )
 
@@ -1451,7 +1468,9 @@ def get_dispersion(grid, dim, omega0, order, omega_eval=None, method="sum"):
     # get the dispersion at the specified frequency of the envelope's frequency
     omega_eval = omega_eval if omega_eval is not None else omega0
 
-    disp0 = xp.interp(xp.array([omega_eval]), omega, disp, left=float('nan'), right=float('nan'))[0]
+    disp0 = xp.interp(
+        xp.array([omega_eval]), omega, disp, left=float("nan"), right=float("nan")
+    )[0]
 
     return disp, disp0
 

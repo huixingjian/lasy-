@@ -11,8 +11,8 @@ from pprint import pprint
 
 import scipy.constants as ct
 import yaml
-from lasy.backend import xp, xp_sci
 
+from lasy.backend import xp, xp_sci
 
 try:
     import numdifftools as nd

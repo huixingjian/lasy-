@@ -1,3 +1,4 @@
+from numpy.testing import assert_approx_equal
 from scipy.constants import c, epsilon_0
 
 from lasy.backend import xp
@@ -11,7 +12,6 @@ from lasy.utils.laser_utils import (
     get_spectrum,
 )
 
-from numpy.testing import assert_approx_equal
 
 def get_gaussian_profile():
     # Cases with Gaussian laser
