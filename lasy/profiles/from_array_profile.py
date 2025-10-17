@@ -91,7 +91,7 @@ class FromArrayProfile(Profile):
             # represents the mode's modulus and its imag the mode's phase.
             for imode in range(self.array.shape[0]):
                 self.field_interp_modes.append(
-                    RegularGridInterpolator(
+                    xp_sci.interpolate.RegularGridInterpolator(
                         (r, axes["t"]),
                         xp.abs(self.array[imode, :, :])
                         + 1.0j * xp.unwrap(xp.angle(self.array[imode, :, :]), axis=-1),
