@@ -11,6 +11,7 @@ from lasy.utils.laser_utils import (
     get_spectrum,
 )
 
+from numpy.testing import assert_approx_equal
 
 def get_gaussian_profile():
     # Cases with Gaussian laser
@@ -48,11 +49,11 @@ def test_laser_analysis_utils():
         d_omega = omega[1] - omega[0]
         spectrum_energy = xp.sum(spectrum) * d_omega
         energy = compute_laser_energy(dim, laser.grid)
-        xp.testing.assert_approx_equal(spectrum_energy, energy, significant=10)
+        assert_approx_equal(spectrum_energy, energy, significant=10)
 
         # Check that laser duration agrees with the given one.
         tau_rms = get_duration(laser.grid, dim)
-        xp.testing.assert_approx_equal(2 * tau_rms, laser.profile.tau, significant=3)
+        assert_approx_equal(2 * tau_rms, laser.profile.tau, significant=3)
 
         # Check that the spectral phase terms are calculated correctly.
         gd = 10e-15
@@ -86,24 +87,24 @@ def test_laser_normalization_utils():
         # Check energy normalization
         laser.normalize(1, kind="energy")
         energy = compute_laser_energy(dim, laser.grid)
-        xp.testing.assert_approx_equal(1, energy, significant=10)
+        assert_approx_equal(1, energy, significant=10)
 
         # Check peak field normalization
         laser.normalize(1, kind="field")
         field = laser.grid.get_temporal_field()
-        xp.testing.assert_approx_equal(1, xp.abs(field.max()), significant=10)
+        assert_approx_equal(1, xp.abs(field.max()), significant=10)
 
         # Check peak intensity normalization
         laser.normalize(1, kind="intensity")
         field = laser.grid.get_temporal_field()
         intensity = xp.abs(epsilon_0 * field**2 / 2 * c)
-        xp.testing.assert_approx_equal(1, intensity.max(), significant=10)
+        assert_approx_equal(1, intensity.max(), significant=10)
 
         # Check average intensity normalization
         laser.normalize(1, kind="average_intensity")
         field = laser.grid.get_temporal_field()
         intensity = xp.abs(epsilon_0 * field**2 / 2 * c)
-        xp.testing.assert_approx_equal(1, intensity.mean(), significant=10)
+        assert_approx_equal(1, intensity.mean(), significant=10)
 
 
 if __name__ == "__main__":

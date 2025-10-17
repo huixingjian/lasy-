@@ -1,7 +1,6 @@
-from scipy import special
 from scipy.constants import c, epsilon_0
 
-from lasy.backend import xp
+from lasy.backend import xp, xp_sci
 from lasy.laser import Laser
 from lasy.optical_elements import Axicon
 from lasy.profiles.gaussian_profile import GaussianProfile
@@ -66,7 +65,7 @@ def check_bessel_profile(laser, z):
         * xp.exp(-2 * z**2 / (z_max**2))
         * z
         / z_max
-        * special.j0(kr) ** 2
+        * xp_sci.special.j0(kr) ** 2
     )
 
     # Calculate error

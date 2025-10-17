@@ -1,6 +1,4 @@
-from scipy.interpolate import RegularGridInterpolator
-
-from lasy.backend import xp
+from lasy.backend import xp, xp_sci
 
 from .profile import Profile
 
@@ -61,7 +59,7 @@ class FromArrayProfile(Profile):
         if dim == "xyt":
             assert axes_order == ["x", "y", "t"]
 
-            self.combined_field_interp = RegularGridInterpolator(
+            self.combined_field_interp =  xp_sci.interpolate.RegularGridInterpolator(
                 (axes["x"], axes["y"], axes["t"]),
                 xp.abs(self.array) + 1.0j * xp.unwrap(xp.angle(self.array), axis=-1),
                 bounds_error=False,

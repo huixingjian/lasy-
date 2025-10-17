@@ -1,6 +1,4 @@
-from scipy.interpolate import RegularGridInterpolator
-
-from lasy.backend import xp
+from lasy.backend import xp, xp_sci
 from lasy.utils.exp_data_utils import find_center_of_mass
 
 from .transverse_profile import TransverseProfile
@@ -74,7 +72,7 @@ class TransverseProfileFromData(TransverseProfile):
         intensity_data /= xp.sum(intensity_data) * dx * dy
 
         # Note here we use the square root of intensity to get the 'field'
-        self.field_interp = RegularGridInterpolator(
+        self.field_interp = xp_sci.interpolate.RegularGridInterpolator(
             (y_data, x_data),
             xp.sqrt(intensity_data),
             bounds_error=False,

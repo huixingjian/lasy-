@@ -1,10 +1,8 @@
 from axiprop.containers import ScalarFieldEnvelope
 from axiprop.lib import PropagatorFFT2, PropagatorResampling
 from scipy.constants import c, e, epsilon_0, m_e
-from scipy.interpolate import interp1d
-from scipy.signal import hilbert
 
-from lasy.backend import xp
+from lasy.backend import to_cpu, to_gpu, use_cupy, xp, xp_sci
 
 from .grid import Grid
 
@@ -331,10 +329,8 @@ def get_full_field(laser, theta=0, slice=0, slice_axis="x", Nt=None):
         env_new = xp.zeros((Nr, Nt), dtype=env.dtype)
 
         for ir in range(Nr):
-            interp_fu_abs = interp1d(time_axis, xp.abs(env[ir]))
-            slice_abs = interp_fu_abs(time_axis_new)
-            interp_fu_angl = interp1d(time_axis, xp.unwrap(xp.angle(env[ir])))
-            slice_angl = interp_fu_angl(time_axis_new)
+            slice_abs = xp.interp(time_axis_new, time_axis, xp.abs(env[ir]))
+            slice_angl = xp.interp(time_axis_new, time_axis, xp.unwrap(xp.angle(env[ir])))
             env_new[ir] = slice_abs * xp.exp(1j * slice_angl)
 
         time_axis = time_axis_new
@@ -768,7 +764,7 @@ def hilbert_transform(field):
     field : 3d numpy array
         The field whose field should be transformed.
     """
-    return hilbert(field[:, :, ::-1])[:, :, ::-1]
+    return xp_sci.signal.hilbert(field[:, :, ::-1])[:, :, ::-1]
 
 
 def get_grid_cell_volume(grid, dim):
@@ -881,7 +877,7 @@ def create_grid(array, axes, dim, is_envelope=True, position=0.0):
     return grid
 
 
-def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="NP"):
+def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="CU" if use_cupy else "NP"):
     """
     Export laser pulse to spatial domain from temporal domain (internal LASY representation).
 
@@ -924,7 +920,7 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="NP"):
     if z_axis is None:
         z_axis = t_axis * c
 
-    FieldAxprp = ScalarFieldEnvelope(omega0 / c, t_axis)
+    FieldAxprp = ScalarFieldEnvelope(omega0 / c, to_cpu(t_axis))
 
     field = grid.get_temporal_field()
 
@@ -934,11 +930,11 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="NP"):
         for m in grid.azimuthal_modes:
             prop.append(
                 PropagatorResampling(
-                    grid.axes[0],
+                    to_cpu(grid.axes[0]),
                     FieldAxprp.k_freq,
-                    mode=m,
+                    mode=int(m),
                     backend=backend,
-                    verbose=False,
+                    verbose=False
                 )
             )
 
@@ -949,9 +945,9 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="NP"):
 
         # Convert the spectral image to the spatial field representation
         for i_m in range(grid.azimuthal_modes.size):
-            FieldAxprp.import_field(xp.transpose(field[i_m]).copy())
+            FieldAxprp.import_field(to_cpu(xp.transpose(field[i_m]).copy()))
 
-            field_z[i_m] = prop[i_m].t2z(FieldAxprp.Field_ft, z_axis, z0=z0, t0=t0).T
+            field_z[i_m] = prop[i_m].t2z(to_gpu(FieldAxprp.Field_ft), to_gpu(z_axis), z0=z0, t0=t0).T
 
             field_z[i_m] *= xp.exp(-1j * (z_axis / c + t0) * omega0)
     else:
@@ -967,15 +963,15 @@ def export_to_z(dim, grid, omega0, z_axis=None, z0=0.0, t0=0.0, backend="NP"):
             verbose=False,
         )
         # Convert the spectral image to the spatial field representation
-        FieldAxprp.import_field(xp.moveaxis(field, -1, 0).copy())
+        FieldAxprp.import_field(to_cpu(xp.moveaxis(field, -1, 0).copy()))
         field_z = prop.t2z(FieldAxprp.Field_ft, z_axis, z0=z0, t0=t0)
-        field_z = xp.moveaxis(field_z, 0, -1)
+        field_z = xp.moveaxis(to_gpu(field_z), 0, -1)
         field_z *= xp.exp(-1j * (z_axis / c + t0) * omega0)
 
     return field_z
 
 
-def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="NP"):
+def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="CU" if use_cupy else "NP"):
     """
     Import laser pulse from spatial domain to temporal domain (internal LASY representation).
 
@@ -1028,11 +1024,11 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
         for m in grid.azimuthal_modes:
             prop.append(
                 PropagatorResampling(
-                    grid.axes[0],
-                    omega / c,
-                    mode=m,
+                    to_cpu(grid.axes[0]),
+                    to_cpu(omega / c),
+                    mode=int(m),
                     backend=backend,
-                    verbose=False,
+                    verbose=False
                 )
             )
 
@@ -1059,7 +1055,8 @@ def import_from_z(dim, grid, omega0, field_z, z_axis, z0=0.0, t0=0.0, backend="N
         # Convert the spectral image to the spatial field representation
         transform_data = xp.moveaxis(field_fft, -1, 0).copy()
         transform_data *= xp.exp(-1j * z_axis[0] * (k_z[:, None, None] - omega0 / c))
-        field = xp.moveaxis(prop.z2t(transform_data, t_axis, z0=z0, t0=t0), 0, -1)
+        tmp = prop.z2t(transform_data, t_axis, z0=z0, t0=t0)
+        field = xp.moveaxis(to_gpu(tmp), 0, -1)
         field *= xp.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)
 
@@ -1454,7 +1451,7 @@ def get_dispersion(grid, dim, omega0, order, omega_eval=None, method="sum"):
     # get the dispersion at the specified frequency of the envelope's frequency
     omega_eval = omega_eval if omega_eval is not None else omega0
 
-    disp0 = interp1d(omega, disp, bounds_error=True)(omega_eval)
+    disp0 = xp.interp(xp.array([omega_eval]), omega, disp, left=float('nan'), right=float('nan'))[0]
 
     return disp, disp0
 

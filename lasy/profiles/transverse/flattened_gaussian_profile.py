@@ -1,8 +1,6 @@
 import math
 
-from scipy.special import binom
-
-from lasy.backend import xp
+from lasy.backend import xp, xp_sci
 
 from .transverse_profile import TransverseProfile
 
@@ -113,7 +111,7 @@ class FlattenedGaussianTransverseProfile(TransverseProfile):
             self.cn = xp.empty(self.N + 1)
             for n in range(self.N + 1):
                 m_values = xp.arange(n, self.N + 1)
-                self.cn[n] = xp.sum((1.0 / 2) ** m_values * binom(m_values, n)) / (
+                self.cn[n] = xp.sum((1.0 / 2) ** m_values * xp_sci.special.binom(m_values, n)) / (
                     self.N + 1
                 )
         else:

@@ -2,7 +2,7 @@ from math import factorial
 
 from scipy.special import genlaguerre
 
-from lasy.backend import xp
+from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
@@ -176,7 +176,7 @@ class LaguerreGaussianTransverseProfile(TransverseProfile):
         LG = (
             A
             * (xp.sqrt(2.0) * xp.sqrt(x**2 + y**2) / w0Z) ** (m)
-            * genlaguerre(p, m)(2.0 * (x**2 + y**2) / w0Z**2)
+            * to_gpu(genlaguerre(p, m)(to_cpu(2.0 * (x**2 + y**2) / w0Z**2)))
             * xp.exp(-(x**2 + y**2) / w0Z**2)
             * xp.exp(-1j * k0 * (x**2 + y**2) / 2 / (z_eval**2 + Zr**2) * z_eval)
         )

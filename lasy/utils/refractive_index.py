@@ -11,9 +11,8 @@ from pprint import pprint
 
 import scipy.constants as ct
 import yaml
-from scipy.interpolate import CubicSpline
+from lasy.backend import xp, xp_sci
 
-from lasy.backend import xp
 
 try:
     import numdifftools as nd
@@ -420,7 +419,7 @@ class Material:
                         max(self.wavelengths_n),
                     ]
                     self.data_n = self.data_raw[:, 1]
-                    self.interp_n = CubicSpline(
+                    self.interp_n = xp_sci.interpolate.CubicSpline(
                         self.wavelengths_n, self.data_n, **interp_kw
                     )
                 if "k" in type:
@@ -432,7 +431,7 @@ class Material:
                     self.data_k = (
                         self.data_raw[:, 2] if "nk" in type else self.data_raw[:, 1]
                     )
-                    self.interp_k = CubicSpline(
+                    self.interp_k = xp_sci.interpolate.CubicSpline(
                         self.wavelengths_k, self.data_k, **interp_kw
                     )
 

@@ -1,9 +1,10 @@
 from scipy.constants import c
 
-from lasy.backend import xp
+from lasy.backend import to_cpu, xp
 
 from .profile import Profile
 
+import numpy as np
 
 def gen_gaussian_time_series(t_num, dt, fwhm, rms_mean):
     """Generate a discrete time series that has gaussian power spectrum.
@@ -276,7 +277,7 @@ class SpeckleProfile(Profile):
                 ssd_transverse_bandwidth_distribution,
                 ssd_phase_modulation_amplitude,
             ):
-                assert xp.size(q) == 2, "has to be a size 2 array"
+                assert len(q) == 2, "has to be a size 2 array"
                 assert q[0] > 0 or q[1] > 0, "cannot be all zeros"
 
     def init_gaussian_time_series(
@@ -313,9 +314,10 @@ class SpeckleProfile(Profile):
         array-like, either with 2 (for "SSD" smoothing) or `n_beamlets[0] x n_beamlets[1]` ("ISI" smoothing) random numbers at every time
         """
         if "SSD" in self.temporal_smoothing_type.upper():
+            ssd_time_delay_sum = np.sum(to_cpu(self.ssd_time_delay))
             pm_phase0 = gen_gaussian_time_series(
                 series_time.size
-                + int(xp.sum(self.ssd_time_delay) / self.dt_update)
+                + int(ssd_time_delay_sum / self.dt_update)
                 + 2,
                 self.dt_update,
                 2 * xp.pi * self.ssd_phase_modulation_frequency[0],
@@ -323,7 +325,7 @@ class SpeckleProfile(Profile):
             )
             pm_phase1 = gen_gaussian_time_series(
                 series_time.size
-                + int(xp.sum(self.ssd_time_delay) / self.dt_update)
+                + int(ssd_time_delay_sum / self.dt_update)
                 + 2,
                 self.dt_update,
                 2 * xp.pi * self.ssd_phase_modulation_frequency[1],
@@ -331,7 +333,7 @@ class SpeckleProfile(Profile):
             )
             time_interp = xp.arange(
                 start=0,
-                stop=series_time[-1] + xp.sum(self.ssd_time_delay) + 3 * self.dt_update,
+                stop=series_time[-1] + ssd_time_delay_sum + 3 * self.dt_update,
                 step=self.dt_update,
             )[: pm_phase0.size]
             return (
@@ -433,7 +435,7 @@ class SpeckleProfile(Profile):
             )
             return xp.exp(1j * phase_t)
         elif temporal_smoothing_type.upper() == "GP ISI":
-            return time_series[:, :, int(round(t_now / self.dt_update))]
+            return time_series[:, :, int(round(float(t_now / self.dt_update)))]
         else:
             raise NotImplementedError
 

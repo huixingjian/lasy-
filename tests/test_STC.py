@@ -16,6 +16,8 @@ from lasy.profiles.longitudinal import GaussianLongitudinalProfile
 from lasy.profiles.transverse import GaussianTransverseProfile
 from lasy.utils.laser_utils import get_beta, get_dispersion, get_zeta
 
+from numpy.testing import assert_approx_equal
+
 wavelength = 0.6e-6  # m
 pol = (1, 0)
 laser_energy = 1.0  # J
@@ -109,6 +111,6 @@ gdd_3d, gdd0_3d = get_dispersion(
 
 assert (err_real + err_imag) < 1e-6
 
-xp.testing.assert_approx_equal(gdd0_3d, phi2, significant=2)
-xp.testing.assert_approx_equal(zeta_y, zeta, significant=2)
-xp.testing.assert_approx_equal(beta_y, beta, significant=2)
+assert_approx_equal(gdd0_3d, phi2, significant=2)
+assert_approx_equal(zeta_y, zeta, significant=2)
+assert_approx_equal(beta_y, beta, significant=2)

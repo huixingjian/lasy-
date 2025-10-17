@@ -1,4 +1,4 @@
-from lasy.backend import to_gpu, xp
+from lasy.backend import to_cpu, to_gpu, use_cupy, xp
 
 from .fft_wrapper import fft, frequency_axis
 
@@ -241,7 +241,7 @@ class Grid:
         assert self.temporal_field_valid
 
         self.spectral_field, self.spectral_axis = fft(
-            "longitudinal", self.temporal_field, self.axes[-1], "real"
+            "longitudinal", to_gpu(self.temporal_field), self.axes[-1], "real"
         )
 
         self.spectral_field_valid = True
@@ -255,7 +255,7 @@ class Grid:
         assert self.spectral_field_valid
 
         self.temporal_field, _ = fft(
-            "longitudinal", self.spectral_field, self.axes[-1], "frequency"
+            "longitudinal", to_gpu(self.spectral_field), self.axes[-1], "frequency"
         )
 
         self.temporal_field_valid = True

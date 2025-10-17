@@ -1,6 +1,4 @@
-import scipy.special as scispe
-
-from lasy.backend import xp
+from lasy.backend import xp, xp_sci
 
 from .transverse_profile import TransverseProfile
 
@@ -48,7 +46,7 @@ class JincTransverseProfile(TransverseProfile):
         envelope = xp.ones_like(r_over_w0)
         # Avoid dividing by zero
         xp.divide(
-            2.0 * scispe.jv(1, r_over_w0),
+            2.0 * xp_sci.special.jv(1, r_over_w0),
             r_over_w0,
             out=envelope,
             where=r_over_w0 > 0.0,
