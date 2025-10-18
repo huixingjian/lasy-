@@ -9,13 +9,12 @@ import os
 import warnings
 from pprint import pprint
 
+import numpy as np
 import scipy.constants as ct
 import yaml
+from scipy.interpolate import CubicSpline
 
 from lasy.backend import to_cpu, to_gpu, xp
-import numpy as np
-
-from scipy.interpolate import CubicSpline
 
 try:
     import numdifftools as nd

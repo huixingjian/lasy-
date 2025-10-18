@@ -1,8 +1,9 @@
+from scipy.special import jv
+
 from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
-from scipy.special import jv
 
 class JincTransverseProfile(TransverseProfile):
     r"""

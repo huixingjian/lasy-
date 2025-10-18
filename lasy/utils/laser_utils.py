@@ -952,9 +952,7 @@ def export_to_z(
             FieldAxprp.import_field(to_cpu(xp.transpose(field[i_m]).copy()))
 
             field_z[i_m] = to_gpu(
-                prop[i_m]
-                .t2z(FieldAxprp.Field_ft, to_cpu(z_axis), z0=z0, t0=t0)
-                .T
+                prop[i_m].t2z(FieldAxprp.Field_ft, to_cpu(z_axis), z0=z0, t0=t0).T
             )
 
             field_z[i_m] *= xp.exp(-1j * (z_axis / c + t0) * omega0)
@@ -1054,7 +1052,9 @@ def import_from_z(
         for i_m in range(grid.azimuthal_modes.size):
             transform_data = xp.transpose(field_fft[i_m]).copy()
             transform_data *= xp.exp(-1j * z_axis[0] * (k_z[:, None] - omega0 / c))
-            field[i_m] = to_gpu(prop[i_m].z2t(to_cpu(transform_data), to_cpu(t_axis), z0=z0, t0=t0)).T
+            field[i_m] = to_gpu(
+                prop[i_m].z2t(to_cpu(transform_data), to_cpu(t_axis), z0=z0, t0=t0)
+            ).T
             field[i_m] *= xp.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)
     else:

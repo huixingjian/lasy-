@@ -1,10 +1,11 @@
 from math import factorial
 
+from scipy.special import hermite
+
 from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
-from scipy.special import hermite
 
 class HermiteGaussianTransverseProfile(TransverseProfile):
     r"""

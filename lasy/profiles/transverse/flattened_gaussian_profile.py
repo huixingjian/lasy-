@@ -1,10 +1,11 @@
 import math
 
+from scipy.special import binom
+
 from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
-from scipy.special import binom
 
 class FlattenedGaussianTransverseProfile(TransverseProfile):
     r"""

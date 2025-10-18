@@ -1,8 +1,8 @@
+import copy
+
 from lasy.backend import to_cpu, to_gpu, use_cupy, xp
 
 from .fft_wrapper import fft, frequency_axis
-
-import copy
 
 time_axis_indx = -1
 

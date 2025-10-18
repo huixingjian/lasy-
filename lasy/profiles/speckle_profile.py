@@ -1,6 +1,6 @@
 from scipy.constants import c
 
-from lasy.backend import to_cpu, xp
+from lasy.backend import xp
 
 from .profile import Profile
 

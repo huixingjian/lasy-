@@ -1,8 +1,7 @@
 try:
     import cupy as xp
     from cupyx import scipy as xp_sci
-    from cupyx.scipy import interpolate
-    from cupyx.scipy import signal
+    from cupyx.scipy import interpolate, signal
 
     use_cupy = True
 
@@ -38,4 +37,13 @@ except ImportError:
         """Convert array from numpy to cupy."""
         return arr
 
-__all__ = ["use_cupy", "xp", "xp_sci", "xp_sci.interpolate", "xp_sci.signal", "to_cpu", "to_gpu"]
+
+__all__ = [
+    "use_cupy",
+    "xp",
+    "xp_sci",
+    "xp_sci.interpolate",
+    "xp_sci.signal",
+    "to_cpu",
+    "to_gpu",
+]
