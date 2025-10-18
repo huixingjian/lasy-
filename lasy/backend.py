@@ -1,7 +1,8 @@
 try:
     import cupy as xp
-    from cupyx import scipy as xp_sci
-    from cupyx.scipy import interpolate, signal
+    from cupyx.scipy.interpolate import RegularGridInterpolator
+    from cupyx.scipy.signal import hilbert, zoom_fft
+    from cupyx.scipy.special import j0
 
     use_cupy = True
 
@@ -25,7 +26,9 @@ try:
 
 except ImportError:
     import numpy as xp
-    import scipy as xp_sci
+    from scipy.interpolate import RegularGridInterpolator
+    from scipy.signal import hilbert, zoom_fft
+    from scipy.special import j0
 
     use_cupy = False
 
@@ -41,9 +44,10 @@ except ImportError:
 __all__ = [
     "use_cupy",
     "xp",
-    "xp_sci",
-    "xp_sci.interpolate",
-    "xp_sci.signal",
     "to_cpu",
     "to_gpu",
+    "RegularGridInterpolator",
+    "hilbert",
+    "zoom_fft",
+    "j0"
 ]

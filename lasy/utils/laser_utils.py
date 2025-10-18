@@ -2,7 +2,7 @@ from axiprop.containers import ScalarFieldEnvelope
 from axiprop.lib import PropagatorFFT2, PropagatorResampling
 from scipy.constants import c, e, epsilon_0, m_e
 
-from lasy.backend import to_cpu, to_gpu, use_cupy, xp, xp_sci
+from lasy.backend import hilbert, to_cpu, to_gpu, use_cupy, xp
 
 from .grid import Grid
 
@@ -766,7 +766,7 @@ def hilbert_transform(field):
     field : 3d numpy array
         The field whose field should be transformed.
     """
-    return xp_sci.signal.hilbert(field[:, :, ::-1])[:, :, ::-1]
+    return hilbert(field[:, :, ::-1])[:, :, ::-1]
 
 
 def get_grid_cell_volume(grid, dim):

@@ -1,4 +1,4 @@
-from lasy.backend import xp, xp_sci
+from lasy.backend import RegularGridInterpolator, xp
 
 from .profile import Profile
 
@@ -59,7 +59,7 @@ class FromArrayProfile(Profile):
         if dim == "xyt":
             assert axes_order == ["x", "y", "t"]
 
-            self.combined_field_interp = xp_sci.interpolate.RegularGridInterpolator(
+            self.combined_field_interp = RegularGridInterpolator(
                 (axes["x"], axes["y"], axes["t"]),
                 xp.abs(self.array) + 1.0j * xp.unwrap(xp.angle(self.array), axis=-1),
                 bounds_error=False,
@@ -91,7 +91,7 @@ class FromArrayProfile(Profile):
             # represents the mode's modulus and its imag the mode's phase.
             for imode in range(self.array.shape[0]):
                 self.field_interp_modes.append(
-                    xp_sci.interpolate.RegularGridInterpolator(
+                    RegularGridInterpolator(
                         (r, axes["t"]),
                         xp.abs(self.array[imode, :, :])
                         + 1.0j * xp.unwrap(xp.angle(self.array[imode, :, :]), axis=-1),

@@ -2,7 +2,7 @@ import copy
 
 from scipy.constants import c
 
-from lasy.backend import xp, xp_sci
+from lasy.backend import xp, zoom_fft
 
 from .propagator import Propagator
 
@@ -145,8 +145,8 @@ class FresnelChirpZPropagator(Propagator):
 
         # Perform the 2D Zoom FFT as a set of 2x 1D Zoom FFTs
         F = (
-            xp_sci.signal.zoom_fft(
-                xp_sci.signal.zoom_fft(
+            zoom_fft(
+                zoom_fft(
                     f,
                     [freq_x[0], freq_x[-1]],
                     m=len(freq_x),
