@@ -49,5 +49,5 @@ __all__ = [
     "RegularGridInterpolator",
     "hilbert",
     "zoom_fft",
-    "j0"
+    "j0",
 ]
