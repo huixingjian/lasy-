@@ -1,6 +1,6 @@
 import math
 
-from lasy.backend import xp
+from lasy.backend import to_cpu, xp
 
 
 def get_zernike_nm(j):
@@ -114,7 +114,7 @@ def RmnGenerator(n, m, rho):
         else:
             r, c = rho.shape
             Rmn = xp.zeros((r, c))
-        for i in k:
+        for i in to_cpu(k):
             Rmn = Rmn + ((-1) ** i * math.factorial(n - i)) / (
                 math.factorial(i)
                 * math.factorial(int((n + m) / 2) - i)

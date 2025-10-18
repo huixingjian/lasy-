@@ -4,7 +4,7 @@ import openpmd_api as io
 from scipy.constants import c
 
 from lasy import __version__ as lasy_version
-from lasy.backend import xp
+from lasy.backend import to_cpu, to_gpu, xp
 
 from .laser_utils import field_to_vector_potential
 
@@ -88,7 +88,7 @@ def write_to_openpmd_file(
 
     # Store metadata needed to reconstruct the field
     m.set_attribute("angularFrequency", 2 * xp.pi * c / wavelength)
-    m.set_attribute("polarization", pol)
+    m.set_attribute("polarization", to_cpu(pol))
     if save_as_vector_potential:
         m.set_attribute("envelopeField", "normalized_vector_potential")
         m.unit_dimension = {}
@@ -130,9 +130,9 @@ def write_to_openpmd_file(
     # Define the dataset
     dataset = io.Dataset(data.dtype, data.shape)
     env = m[io.Mesh_Record_Component.SCALAR]
-    env.position = xp.zeros(len(dim), dtype=xp.float64)
+    env.position = to_cpu(xp.zeros(len(dim), dtype=xp.float64))
     env.reset_dataset(dataset)
-    env.store_chunk(data)
+    env.store_chunk(to_cpu(data))
 
     series.flush()
     series.close()
@@ -169,10 +169,10 @@ def extract_array(m, series, component=None):
 
     """
     if component is not None:
-        array = m[component].load_chunk()
+        array = to_gpu(m[component].load_chunk())
         position = m[component].get_attribute("position")
     else:
-        array = m[io.Mesh_Record_Component.SCALAR].load_chunk()
+        array = to_gpu(m[io.Mesh_Record_Component.SCALAR].load_chunk())
         position = m.get_attribute("position")
     series.flush()
     # node (0.0) or cell (0.5) centered info for each axis

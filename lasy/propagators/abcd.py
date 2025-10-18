@@ -45,7 +45,7 @@ class ABCD:
                 \end{pmatrix}.
 
         """
-        vacuum = xp.array([[1, distance], [0, 1]])
+        vacuum = xp.array([[1, float(distance)], [0, 1]])
         self.abcd = xp.matmul(vacuum, self.abcd)
 
     def add_lens(self, focal_length):

@@ -1,6 +1,8 @@
 try:
     import cupy as xp
     from cupyx import scipy as xp_sci
+    from cupyx.scipy import interpolate
+    from cupyx.scipy import signal
 
     use_cupy = True
 
@@ -13,7 +15,6 @@ try:
         elif isinstance(arr, tuple):
             return (to_cpu(a) for a in arr)
         else:
-            assert False, f"type is {type(arr)}"
             return arr
 
     def to_gpu(arr):
@@ -37,7 +38,4 @@ except ImportError:
         """Convert array from numpy to cupy."""
         return arr
 
-# assert use_cupy==False
-# print("use_cupy:", use_cupy)
-
-__all__ = ["use_cupy", "xp", "xp_sci", "to_cpu", "to_gpu"]
+__all__ = ["use_cupy", "xp", "xp_sci", "xp_sci.interpolate", "xp_sci.signal", "to_cpu", "to_gpu"]

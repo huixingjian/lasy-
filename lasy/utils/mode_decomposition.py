@@ -93,9 +93,9 @@ def hermite_gauss_decomposition(
     for m in range(m_max):
         for n in range(n_max):
             HGMode = HermiteGaussianTransverseProfile(w0x, w0y, m, n, wavelength)
-            coef = xp.real(
+            coef = float(xp.real(
                 xp.sum(field * HGMode.evaluate(X, Y)) * dx * dy
-            )  # modalDecomposition
+            ))  # modalDecomposition
             if math.isnan(coef):
                 coef = 0
             weights[(m, n)] = coef

@@ -454,7 +454,7 @@ def test_add_profiles():
     assert summed_profile.profiles[0] == profile_1
     assert summed_profile.profiles[1] == profile_2
     # Check that the evaluate method works
-    assert xp.allclose(summed_profile.evaluate(0, 0, 0), 3.0)
+    assert xp.allclose(summed_profile.evaluate(xp.array([0]), xp.array([0]), xp.array([0])), 3.0)
 
 
 def test_add_error_if_not_all_profiles():
@@ -491,8 +491,8 @@ def test_scale_profiles():
     # Check that the profiles are stored correctly
     assert scaled_profile.profile == profile_1
     # Check that the evaluate method works
-    assert xp.allclose(scaled_profile.evaluate(0, 0, 0), 2.0)
-    assert xp.allclose(scaled_profile_right.evaluate(0, 0, 0), 2.0)
+    assert xp.allclose(scaled_profile.evaluate(xp.array([0]), xp.array([0]), xp.array([0])), 2.0)
+    assert xp.allclose(scaled_profile_right.evaluate(xp.array([0]), xp.array([0]), xp.array([0])), 2.0)
 
 
 def test_scale_error_if_not_scalar():
@@ -514,7 +514,7 @@ def test_add_transverse_profiles():
     assert summed_trans_profile.transverse_profiles[0] == trans_profile_1
     assert summed_trans_profile.transverse_profiles[1] == trans_profile_2
     # Check that the evaluate method works
-    assert xp.allclose(summed_trans_profile.evaluate(0, 0), 3.0)
+    assert xp.allclose(summed_trans_profile.evaluate(xp.array([0]), xp.array([0])), 3.0)
 
 
 def test_add_transverse_error_if_not_all_transverse_profiles():
@@ -534,8 +534,8 @@ def test_scale_transverse_profiles():
     # Check that the profiles are stored correctly
     assert scaled_trans_profile.transverse_profile == trans_profile_1
     # Check that the evaluate method works
-    assert xp.allclose(scaled_trans_profile.evaluate(0, 0), 2.0)
-    assert xp.allclose(scaled_trans_profile.evaluate(0, 0), 2.0)
+    assert xp.allclose(scaled_trans_profile.evaluate(xp.array([0]), xp.array([0])), 2.0)
+    assert xp.allclose(scaled_trans_profile.evaluate(xp.array([0]), xp.array([0])), 2.0)
 
 
 def test_scale_trans_error_if_not_scalar():

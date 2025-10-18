@@ -1,7 +1,8 @@
-from lasy.backend import xp, xp_sci
+from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
+from scipy.special import jv
 
 class JincTransverseProfile(TransverseProfile):
     r"""
@@ -43,13 +44,11 @@ class JincTransverseProfile(TransverseProfile):
         """
         r_over_w0 = xp.sqrt(x**2 + y**2) / self.w0
 
-        envelope = xp.ones_like(r_over_w0)
-        # Avoid dividing by zero
-        xp.divide(
-            2.0 * xp_sci.special.jv(1, r_over_w0),
-            r_over_w0,
-            out=envelope,
-            where=r_over_w0 > 0.0,
-        )
+        envelope = 2.0 * to_gpu(jv(1, to_cpu(r_over_w0)))
 
-        return envelope
+        # Avoid dividing by zero
+        unsave_dif = r_over_w0 <= 0.0
+        envelope[unsave_dif] = 1
+        r_over_w0[unsave_dif] = 1
+
+        return envelope / r_over_w0

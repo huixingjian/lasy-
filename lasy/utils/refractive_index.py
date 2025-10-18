@@ -12,7 +12,10 @@ from pprint import pprint
 import scipy.constants as ct
 import yaml
 
-from lasy.backend import xp, xp_sci
+from lasy.backend import to_cpu, to_gpu, xp
+import numpy as np
+
+from scipy.interpolate import CubicSpline
 
 try:
     import numdifftools as nd
@@ -396,10 +399,10 @@ class Material:
             # Parse different types of data we know about
             if "formula" in type:
                 self.type_n = type
-                self.wavelength_range_n = xp.fromstring(
+                self.wavelength_range_n = np.fromstring(
                     data.get("wavelength_range", "nan nan"), sep=" "
                 )
-                self.coefficients_n = xp.fromstring(
+                self.coefficients_n = np.fromstring(
                     data.get("coefficients", "0 0"), sep=" "
                 )
                 self.equation_n = globals().get("_" + self.type_n)
@@ -419,8 +422,8 @@ class Material:
                         max(self.wavelengths_n),
                     ]
                     self.data_n = self.data_raw[:, 1]
-                    self.interp_n = xp_sci.interpolate.CubicSpline(
-                        self.wavelengths_n, self.data_n, **interp_kw
+                    self.interp_n = CubicSpline(
+                        to_cpu(self.wavelengths_n), to_cpu(self.data_n), **interp_kw
                     )
                 if "k" in type:
                     self.wavelengths_k = self.data_raw[:, 0]
@@ -431,8 +434,8 @@ class Material:
                     self.data_k = (
                         self.data_raw[:, 2] if "nk" in type else self.data_raw[:, 1]
                     )
-                    self.interp_k = xp_sci.interpolate.CubicSpline(
-                        self.wavelengths_k, self.data_k, **interp_kw
+                    self.interp_k = CubicSpline(
+                        to_cpu(self.wavelengths_k), to_cpu(self.data_k), **interp_kw
                     )
 
     def _load_data_n2(self, mat_n2s):
@@ -466,13 +469,13 @@ class Material:
 
         Returns
         -------
-        n : float or xp.array
+        n : float or np.array
             Refractive index value, same shape as `lambda_mu`. 0 is
             returned for wavelengths outside the applicable range
         """
         # Make inputs into a proper array
         if isinstance(lambda_um, (list, set)):
-            lambda_um = xp.array(lambda_um)
+            lambda_um = np.array(lambda_um)
 
         mask = (self.wavelength_range_n[0] < lambda_um) & (
             lambda_um < self.wavelength_range_n[1]
@@ -483,10 +486,10 @@ class Material:
         else:
             n = self.interp_n(lambda_um)
 
-        if isinstance(mask, (bool, xp.bool_)):
+        if isinstance(mask, (bool, np.bool_)):
             return n * int(mask)
         else:
-            n[xp.logical_not(mask)] = 0.0
+            n[np.logical_not(mask)] = 0.0
             return n
 
     def calc_k(self, lambda_um):
@@ -521,7 +524,7 @@ class Material:
             lambda_um < self.wavelength_range_k[1]
         )
 
-        k = self.interp_k(lambda_um)
+        k = to_gpu(self.interp_k(lambda_um))
 
         if isinstance(mask, (bool, xp.bool_)):
             return k * int(mask)
@@ -565,6 +568,7 @@ class Material:
         d3phi_dw3 : float
             Third term (TOD), in units s^3/m
         """
+        omega0 = float(omega0)
         lam = 2 * xp.pi * ct.c / omega0  # Sellmeier and everything uses dn/dlambda!
         lam_mu = 1e6 * lam
         dphi = (self.calc_n(lam_mu) - lam * self._dn_dw(lam_mu, 1)) / ct.c
@@ -682,20 +686,20 @@ def _formula1(lam, c1, c2, c3, c4, c5, c6, c7):
         + c4 * l2 / (l2 - c5**2)
         + c6 * l2 / (l2 - c7**2)
     )
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _formula2(lam, c1, c2, c3, c4, c5, c6, c7):
     # eg specs/ohara/optical/LAH78.yml
     l2 = lam**2
     n2 = 1 + c1 + c2 * l2 / (l2 - c3) + c4 * l2 / (l2 - c5) + c6 * l2 / (l2 - c7)
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _formula3(lam, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11):
     # eg specs/sumita/optical/K-BOC20.yml
     n2 = c1 + c2 * lam**c3 + c4 * lam**c5 + c6 * lam**c7 + c8 * lam**c9 + c10 * lam**c11
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _formula4(lam, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10=0, c11=0):
@@ -707,7 +711,7 @@ def _formula4(lam, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10=0, c11=0):
         + c6 * lam**c7 / (l2 - c8**c9)
         + c10 * lam**c11
     )
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _formula5(lam, c1, c2, c3, c4, c5, c6, c7):
@@ -735,14 +739,14 @@ def _formula8(lam, c1, c2, c3, c4):
     l2 = lam**2
     RHS = c1 + c2 * l2 / (l2 - c3) + c4 * l2
     n2 = (2 * RHS + 1) / (1 - RHS)
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _formula9(lam, c1, c2, c3, c4, c5, c6):
     # eg organic/CH4N2O - urea/nk/Rosker-e.yml
     lc5 = lam - c5
     n2 = c1 + c2 / (lam**2 - c3) + c4 * lc5 / (lc5**2 + c6)
-    return xp.sqrt(n2)
+    return np.sqrt(n2)
 
 
 def _clean_yaml_file(filename):

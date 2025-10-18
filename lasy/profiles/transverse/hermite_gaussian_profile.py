@@ -1,9 +1,10 @@
 from math import factorial
 
-from lasy.backend import xp, xp_sci
+from lasy.backend import to_cpu, to_gpu, xp
 
 from .transverse_profile import TransverseProfile
 
+from scipy.special import hermite
 
 class HermiteGaussianTransverseProfile(TransverseProfile):
     r"""
@@ -194,13 +195,13 @@ class HermiteGaussianTransverseProfile(TransverseProfile):
         # Calculate the HG in each plane
         HGnx = (
             Anx
-            * xp_sci.special.hermite(m)(xp.sqrt(2) * (x) / wxZ)
+            * to_gpu(hermite(int(m))(to_cpu(xp.sqrt(2) * (x) / wxZ)))
             * xp.exp(-((x) ** 2) / wxZ**2)
             * xp.exp(-1j * k0 * (x) ** 2 / 2 / (z_eval**2 + Zx**2) * z_eval)
         )
         HGny = (
             Any
-            * xp_sci.special.hermite(n)(xp.sqrt(2) * (y) / wyZ)
+            * to_gpu(hermite(int(n))(to_cpu(xp.sqrt(2) * (y) / wyZ)))
             * xp.exp(-((y) ** 2) / wyZ**2)
             * xp.exp(-1j * k0 * (y) ** 2 / 2 / (z_eval**2 + Zy**2) * z_eval)
         )

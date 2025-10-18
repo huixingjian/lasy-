@@ -1,4 +1,3 @@
-import numpy as np
 from scipy.constants import c
 
 from lasy.backend import to_cpu, xp
@@ -314,7 +313,7 @@ class SpeckleProfile(Profile):
         array-like, either with 2 (for "SSD" smoothing) or `n_beamlets[0] x n_beamlets[1]` ("ISI" smoothing) random numbers at every time
         """
         if "SSD" in self.temporal_smoothing_type.upper():
-            ssd_time_delay_sum = np.sum(to_cpu(self.ssd_time_delay))
+            ssd_time_delay_sum = self.ssd_time_delay[0] + self.ssd_time_delay[1]
             pm_phase0 = gen_gaussian_time_series(
                 series_time.size + int(ssd_time_delay_sum / self.dt_update) + 2,
                 self.dt_update,

@@ -951,9 +951,9 @@ def export_to_z(
         for i_m in range(grid.azimuthal_modes.size):
             FieldAxprp.import_field(to_cpu(xp.transpose(field[i_m]).copy()))
 
-            field_z[i_m] = (
+            field_z[i_m] = to_gpu(
                 prop[i_m]
-                .t2z(to_gpu(FieldAxprp.Field_ft), to_gpu(z_axis), z0=z0, t0=t0)
+                .t2z(FieldAxprp.Field_ft, to_cpu(z_axis), z0=z0, t0=t0)
                 .T
             )
 
@@ -961,8 +961,8 @@ def export_to_z(
     else:
         # Construct the propagator
         Nx, Ny, Nt = field.shape
-        Lx = grid.hi[0] - grid.lo[0]
-        Ly = grid.hi[1] - grid.lo[1]
+        Lx = float(grid.hi[0] - grid.lo[0])
+        Ly = float(grid.hi[1] - grid.lo[1])
         prop = PropagatorFFT2(
             (Lx, Nx),
             (Ly, Ny),
@@ -972,8 +972,8 @@ def export_to_z(
         )
         # Convert the spectral image to the spatial field representation
         FieldAxprp.import_field(to_cpu(xp.moveaxis(field, -1, 0).copy()))
-        field_z = prop.t2z(FieldAxprp.Field_ft, z_axis, z0=z0, t0=t0)
-        field_z = xp.moveaxis(to_gpu(field_z), 0, -1)
+        field_z = to_gpu(prop.t2z(FieldAxprp.Field_ft, to_cpu(z_axis), z0=z0, t0=t0))
+        field_z = xp.moveaxis(field_z, 0, -1)
         field_z *= xp.exp(-1j * (z_axis / c + t0) * omega0)
 
     return field_z
@@ -1054,25 +1054,25 @@ def import_from_z(
         for i_m in range(grid.azimuthal_modes.size):
             transform_data = xp.transpose(field_fft[i_m]).copy()
             transform_data *= xp.exp(-1j * z_axis[0] * (k_z[:, None] - omega0 / c))
-            field[i_m] = prop[i_m].z2t(transform_data, t_axis, z0=z0, t0=t0).T
+            field[i_m] = to_gpu(prop[i_m].z2t(to_cpu(transform_data), to_cpu(t_axis), z0=z0, t0=t0)).T
             field[i_m] *= xp.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)
     else:
         # Construct the propagator
         Nx, Ny, _ = grid.npoints
-        Lx = grid.hi[0] - grid.lo[0]
-        Ly = grid.hi[1] - grid.lo[1]
+        Lx = float(grid.hi[0] - grid.lo[0])
+        Ly = float(grid.hi[1] - grid.lo[1])
         prop = PropagatorFFT2(
             (Lx, Nx),
             (Ly, Ny),
-            omega / c,
+            to_cpu(omega / c),
             backend=backend,
             verbose=False,
         )
         # Convert the spectral image to the spatial field representation
         transform_data = xp.moveaxis(field_fft, -1, 0).copy()
         transform_data *= xp.exp(-1j * z_axis[0] * (k_z[:, None, None] - omega0 / c))
-        tmp = prop.z2t(transform_data, t_axis, z0=z0, t0=t0)
+        tmp = prop.z2t(to_cpu(transform_data), to_cpu(t_axis), z0=z0, t0=t0)
         field = xp.moveaxis(to_gpu(tmp), 0, -1)
         field *= xp.exp(1j * (z0 / c + t_axis) * omega0)
         grid.set_temporal_field(field)

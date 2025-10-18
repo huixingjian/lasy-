@@ -10,7 +10,7 @@ from axiprop.lib import (
 from axiprop.utils import import_from_lasy_grid
 from scipy.constants import c
 
-from lasy.backend import use_cupy, xp
+from lasy.backend import to_cpu, to_gpu, use_cupy, xp
 
 from .propagator import Propagator
 
@@ -101,7 +101,7 @@ class AxipropPropagator(Propagator):
                     PropagatorResampling(
                         r_axis=container_in.r,
                         kz_axis=container_in.k_freq,
-                        r_axis_new=grid_out.axes[0],
+                        r_axis_new=to_cpu(grid_out.axes[0]),
                         mode=m,
                         verbose=verbose,
                         backend="CU" if use_cupy else "NP",
@@ -198,6 +198,7 @@ class AxipropPropagator(Propagator):
         Grid object with laser data after propagation.
         """
         assert distance is not None
+        distance = float(distance)
         if dim == "xyt":
             assert grid_out is None, (
                 "grid_out not yet supported for xyt, please use None"
@@ -251,8 +252,9 @@ class AxipropPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
+        distance = float(distance)
         containers_in, self.m_axis = import_from_lasy_grid(
-            grid_in, "rt", omega0, nr_boundary
+            grid_in.to_axiprop(), "rt", omega0, nr_boundary
         )
 
         field_3d = xp.zeros_like(grid_out.temporal_field)
@@ -275,7 +277,7 @@ class AxipropPropagator(Propagator):
                 Field_ft_new, r_axis=prop_rt.r_new, transform=True, make_copy=False
             )
 
-            field_3d[im] = laser_loc.Field.T
+            field_3d[im] = to_gpu(laser_loc.Field.T)
 
         return field_3d
 
@@ -308,8 +310,9 @@ class AxipropPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
+        distance = float(distance)
         container_in = import_from_lasy_grid(
-            grid_in, "xyt", float(omega0), int(nr_boundary)
+            grid_in.to_axiprop(), "xyt", float(omega0), int(nr_boundary)
         )
 
         self.update("xyt", omega0, container_in, verbose=verbose)
@@ -327,7 +330,7 @@ class AxipropPropagator(Propagator):
             make_copy=False,
         )
 
-        return xp.moveaxis(laser_loc.Field, 0, -1)
+        return xp.moveaxis(to_gpu(laser_loc.Field), 0, -1)
 
 
 class AxipropFresnelPropagator(Propagator):
@@ -397,6 +400,7 @@ class AxipropFresnelPropagator(Propagator):
         verbose : boolean (optional)
             Whether to print intermediate steps.
         """
+        distance = float(distance)
         if hasattr(self, "props_rt"):
             grid_changed = False
             for im in range(self.m_axis.size):
@@ -423,7 +427,7 @@ class AxipropFresnelPropagator(Propagator):
                         dz=distance,
                         r_axis=container_in.r,
                         kz_axis=container_in.k_freq,
-                        r_axis_new=grid_out.axes[0],
+                        r_axis_new=to_cpu(grid_out.axes[0]),
                         mode=m,
                         verbose=verbose,
                         backend="CU" if use_cupy else "NP",
@@ -453,6 +457,7 @@ class AxipropFresnelPropagator(Propagator):
         verbose : boolean (optional)
             Whether to print intermediate steps.
         """
+        distance = float(distance)
         if hasattr(self, "prop_xyt"):
             grid_changed = False
             try:
@@ -473,8 +478,8 @@ class AxipropFresnelPropagator(Propagator):
                 dz=distance,
                 x_axis=container_in.x,
                 y_axis=container_in.y,
-                x_axis_new=grid_out.axes[0],
-                y_axis_new=grid_out.axes[1],
+                x_axis_new=to_cpu(grid_out.axes[0]),
+                y_axis_new=to_cpu(grid_out.axes[1]),
                 kz_axis=container_in.k_freq,
                 verbose=verbose,
                 backend="CU" if use_cupy else "NP",
@@ -580,8 +585,9 @@ class AxipropFresnelPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
+        distance = float(distance)
         containers_in, self.m_axis = import_from_lasy_grid(
-            grid_in, "rt", omega0, nr_boundary
+            grid_in.to_axiprop(), "rt", omega0, nr_boundary
         )
 
         field_3d = xp.zeros_like(grid_out.temporal_field)
@@ -604,7 +610,7 @@ class AxipropFresnelPropagator(Propagator):
                 Field_ft_new, r_axis=prop_rt.r_new, transform=True, make_copy=False
             )
 
-            field_3d[im] = laser_loc.Field.T
+            field_3d[im] = to_gpu(laser_loc.Field.T)
 
         return field_3d
 
@@ -643,8 +649,9 @@ class AxipropFresnelPropagator(Propagator):
         -------
         field : ndarray with laser envelope in temporal representation.
         """
+        distance = float(distance)
         container_in = import_from_lasy_grid(
-            grid_in, "xyt", float(omega0), int(nr_boundary)
+            grid_in.to_axiprop(), "xyt", float(omega0), int(nr_boundary)
         )
 
         self.update(distance, "xyt", omega0, container_in, grid_out, verbose)
@@ -662,4 +669,4 @@ class AxipropFresnelPropagator(Propagator):
             make_copy=False,
         )
 
-        return xp.moveaxis(laser_loc.Field, 0, -1)
+        return xp.moveaxis(to_gpu(laser_loc.Field), 0, -1)

@@ -1,6 +1,8 @@
-from lasy.backend import to_gpu, xp
+from lasy.backend import to_cpu, to_gpu, use_cupy, xp
 
 from .fft_wrapper import fft, frequency_axis
+
+import copy
 
 time_axis_indx = -1
 
@@ -259,3 +261,19 @@ class Grid:
         )
 
         self.temporal_field_valid = True
+
+    def to_axiprop(self):
+        """Copy the parts that axiprop uses to CPU"""
+        if use_cupy:
+            self.get_temporal_field()
+
+            c = copy.copy(self)
+
+            c.temporal_field = to_cpu(self.temporal_field)
+            c.axes = to_cpu(self.axes)
+            if hasattr(self, "azimuthal_modes"):
+                c.azimuthal_modes = to_cpu(self.azimuthal_modes)
+
+            return c
+        else:
+            return self

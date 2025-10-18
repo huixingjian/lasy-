@@ -41,7 +41,7 @@ class FromOpenPMDProfile(FromArrayProfile):
         series = io.Series(file_name, io.Access.read_only)
         iterations = xp.array(series.iterations)
         if iteration is None:
-            iteration = iterations[-1]
+            iteration = int(iterations[-1])
         elif iteration not in iterations:
             raise ValueError(
                 f"Iteration {iteration} not found in openPMD file {file_name}.\n"

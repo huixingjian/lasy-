@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-from numpy.fft import fftfreq, fftshift
 from scipy.constants import c, epsilon_0
 
 from lasy.backend import xp
@@ -148,8 +147,8 @@ class CollinsSFFTPropagator(Propagator):
 
             r0_step = L0_width / N_points  # Note: D gridpoints means D-1 intervals
 
-            x_out = fftshift(fftfreq(N_points, r0_step) * lambda0 * f0)
-            y_out = fftshift(fftfreq(N_points, r0_step) * lambda0 * f0)
+            x_out = xp.fft.fftshift(xp.fft.fftfreq(N_points, r0_step) * lambda0 * f0)
+            y_out = xp.fft.fftshift(xp.fft.fftfreq(N_points, r0_step) * lambda0 * f0)
 
             grid_out.lo[0] = x_out[0]
             grid_out.lo[1] = y_out[0]
