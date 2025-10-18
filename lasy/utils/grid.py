@@ -263,7 +263,7 @@ class Grid:
         self.temporal_field_valid = True
 
     def to_axiprop(self):
-        """Copy the parts that axiprop uses to CPU"""
+        """Copy the parts that axiprop uses to the CPU."""
         if use_cupy:
             self.get_temporal_field()
 
