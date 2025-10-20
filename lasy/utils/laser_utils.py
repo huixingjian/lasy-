@@ -1248,7 +1248,7 @@ def get_beta(dim, grid, k0, order = 1):
         derivative_y_beta = xp.gradient(angle_y, omega, axis=2)   
     beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
     beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
-        return [beta_x, beta_y]
+    return [beta_x, beta_y]
 
 
 def get_pft(dim, grid):
