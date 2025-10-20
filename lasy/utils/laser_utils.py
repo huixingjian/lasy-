@@ -1204,7 +1204,7 @@ def get_zeta(dim, grid, k0):
     return [zeta_x, zeta_y], [nu_x, nu_y]
 
 
-def get_beta(dim, grid, k0):
+def get_beta(dim, grid, k0, order = 1):
     r"""
     Calculate the angular dispersion of the laser.
 
@@ -1222,9 +1222,13 @@ def get_beta(dim, grid, k0):
         It contains an ndarray (V/m) with
         the value of the envelope field and the associated metadata that defines the points at which the laser is defined.
 
+    order: integer
+        Angluar dispersion polynomial order that should be calculated.
+
     Returns
     -------
-    beta_x, beta_y : Angular dispersion in :math:` \beta = \frac{d\theta_0}{d\omega}` (second)
+    beta_x, beta_y : Angular dispersion in :math:` \beta = \frac{d^n\theta_0}{d\omega^n}` (second)
+    
     """
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
     env_spec, spectral_axis = grid.get_spectral_field()
@@ -1235,13 +1239,16 @@ def get_beta(dim, grid, k0):
     phi_envelop_abs = xp.unwrap(
         xp.array(xp.arctan2(env_spec.imag, env_spec.real)), axis=2
     )
-    angle_x = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
-    angle_y = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
-    derivative_x_beta = xp.gradient(angle_y, omega, axis=2)
-    derivative_y_beta = xp.gradient(angle_x, omega, axis=2)
+    angle_x = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
+    angle_y = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
+    derivative_x_beta = xp.gradient(angle_x, omega, axis=2)
+    derivative_y_beta = xp.gradient(angle_y, omega, axis=2) 
+    for _ in range(order - 1):
+        derivative_x_beta = xp.gradient(angle_x, omega, axis=2)
+        derivative_y_beta = xp.gradient(angle_y, omega, axis=2)   
     beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
     beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
-    return [beta_x, beta_y]
+        return [beta_x, beta_y]
 
 
 def get_pft(dim, grid):
