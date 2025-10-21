@@ -1244,8 +1244,8 @@ def get_beta(dim, grid, k0, order = 1):
     derivative_x_beta = xp.gradient(angle_x, omega, axis=2)
     derivative_y_beta = xp.gradient(angle_y, omega, axis=2) 
     for _ in range(order - 1):
-        derivative_x_beta = xp.gradient(angle_x, omega, axis=2)
-        derivative_y_beta = xp.gradient(angle_y, omega, axis=2)   
+        derivative_x_beta = xp.gradient(derivative_x_beta, omega, axis=2)
+        derivative_y_beta = xp.gradient(derivative_y_beta, omega, axis=2)   
     beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
     beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
     return [beta_x, beta_y]
