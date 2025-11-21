@@ -1231,7 +1231,6 @@ def get_beta(dim, grid, k0, order=1):
 
     """
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
-    k0 = laser.profile.omega0 / c
     env_spec, spectral_axis = grid.get_spectral_field()
     env_spec_abs2 = xp.abs(env_spec**2)
     # Get the spectral axis
