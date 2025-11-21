@@ -1204,7 +1204,7 @@ def get_zeta(dim, grid, k0):
     return [zeta_x, zeta_y], [nu_x, nu_y]
 
 
-def get_beta(dim, grid, k0, order = 1):
+def get_beta(dim, grid, k0, order=1):
     r"""
     Calculate the angular dispersion of the laser.
 
@@ -1228,10 +1228,10 @@ def get_beta(dim, grid, k0, order = 1):
     Returns
     -------
     beta_x, beta_y : Angular dispersion in :math:` \beta = \frac{d^n\theta_0}{d\omega^n}` (second)
-    
+
     """
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
-    k0 = laser.profile.omega0/c
+    k0 = laser.profile.omega0 / c
     env_spec, spectral_axis = grid.get_spectral_field()
     env_spec_abs2 = np.abs(env_spec**2)
     # Get the spectral axis
@@ -1243,14 +1243,13 @@ def get_beta(dim, grid, k0, order = 1):
     angle_x = np.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
     angle_y = np.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
     derivative_x_beta = np.gradient(angle_x, omega, axis=2)
-    derivative_y_beta = np.gradient(angle_y, omega, axis=2) 
+    derivative_y_beta = np.gradient(angle_y, omega, axis=2)
     for i in range(order - 1):
         derivative_x_beta = np.gradient(derivative_x_beta, omega, axis=2)
-        derivative_y_beta = np.gradient(derivative_y_beta, omega, axis=2)   
+        derivative_y_beta = np.gradient(derivative_y_beta, omega, axis=2)
     beta_x = np.average(derivative_x_beta, weights=env_spec_abs2)
     beta_y = np.average(derivative_y_beta, weights=env_spec_abs2)
     return [beta_x, beta_y]
-
 
 
 def get_pft(dim, grid):
@@ -1287,7 +1286,8 @@ def get_pft(dim, grid):
     pft_y = xp.average(derivative_y_pft, weights=weight_xy_2d)
     return [pft_x, pft_y]
 
-def get_pfc(dim, grid,k0):
+
+def get_pfc(dim, grid, k0):
     r"""
     Calculate the pulse front  curvature of the laser.
 
@@ -1310,7 +1310,7 @@ def get_pfc(dim, grid,k0):
     """
     env = grid.get_temporal_field()
     env_abs2 = xp.abs(env**2)
-    if dim == "rt":  
+    if dim == "rt":
         phi_envelop_abs = xp.unwrap(xp.angle(env), axis=1)
         pphi_pr = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
         pphi_pr2 = xp.gradient(pphi_pr, grid.dx[0], axis=0)
@@ -1357,8 +1357,6 @@ def get_propation_angle(dim, grid, k0):
     angle_x = xp.average(pphi_px, weights=env_abs2) / k0
     angle_y = xp.average(pphi_py, weights=env_abs2) / k0
     return [angle_x, angle_y]
-
-
 
 
 def get_spectral_phase(grid, dim, omega0, method="sum", ordering="zero_center"):
