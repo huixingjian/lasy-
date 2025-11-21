@@ -1204,7 +1204,7 @@ def get_zeta(dim, grid, k0):
     return [zeta_x, zeta_y], [nu_x, nu_y]
 
 
-def get_beta(dim, grid, k0):
+def get_beta(dim, grid, k0, order = 1):
     r"""
     Calculate the angular dispersion of the laser.
 
@@ -1222,26 +1222,35 @@ def get_beta(dim, grid, k0):
         It contains an ndarray (V/m) with
         the value of the envelope field and the associated metadata that defines the points at which the laser is defined.
 
+    order: integer
+        Angluar dispersion polynomial order that should be calculated.
+
     Returns
     -------
-    beta_x, beta_y : Angular dispersion in :math:` \beta = \frac{d\theta_0}{d\omega}` (second)
+    beta_x, beta_y : Angular dispersion in :math:` \beta = \frac{d^n\theta_0}{d\omega^n}` (second)
+    
     """
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
+    k0 = laser.profile.omega0/c
     env_spec, spectral_axis = grid.get_spectral_field()
-    env_spec_abs2 = xp.abs(env_spec**2)
+    env_spec_abs2 = np.abs(env_spec**2)
     # Get the spectral axis
     omega = spectral_axis + k0 * c
     # Calculate angular dispersion beta
-    phi_envelop_abs = xp.unwrap(
-        xp.array(xp.arctan2(env_spec.imag, env_spec.real)), axis=2
+    phi_envelop_abs = np.unwrap(
+        np.array(np.arctan2(env_spec.imag, env_spec.real)), axis=2
     )
-    angle_x = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
-    angle_y = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
-    derivative_x_beta = xp.gradient(angle_y, omega, axis=2)
-    derivative_y_beta = xp.gradient(angle_x, omega, axis=2)
-    beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
-    beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
+    angle_x = np.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
+    angle_y = np.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
+    derivative_x_beta = np.gradient(angle_x, omega, axis=2)
+    derivative_y_beta = np.gradient(angle_y, omega, axis=2) 
+    for i in range(order - 1):
+        derivative_x_beta = np.gradient(derivative_x_beta, omega, axis=2)
+        derivative_y_beta = np.gradient(derivative_y_beta, omega, axis=2)   
+    beta_x = np.average(derivative_x_beta, weights=env_spec_abs2)
+    beta_y = np.average(derivative_y_beta, weights=env_spec_abs2)
     return [beta_x, beta_y]
+
 
 
 def get_pft(dim, grid):
@@ -1278,6 +1287,45 @@ def get_pft(dim, grid):
     pft_y = xp.average(derivative_y_pft, weights=weight_xy_2d)
     return [pft_x, pft_y]
 
+def get_pfc(dim, grid,k0):
+    r"""
+    Calculate the pulse front  curvature of the laser.
+
+    Parameters
+    ----------
+    dim : string
+        Dimensionality of the array. Options are:
+
+        - ``'xyt'``: The laser pulse is represented on a 3D grid:
+                    Cartesian (x,y) transversely, and temporal (t) longitudinally.
+        - ``'rt'`` : The laser pulse is represented on a 2D grid:
+                    Cylindrical (r) transversely, and temporal (t) longitudinally.
+
+    grid : a Grid object.
+        It contains an ndarray (V/m) with the value of the envelope field and the associated metadata that defines the points at which the laser is defined.
+
+    Returns
+    -------
+    pfc_r/ [pfc_x, pfc_y] : Pulse front curvature in :math:`pfc = \frac{d^2k_x}{dk_zdx}` or :math:`p = \frac{d^2k_r}{dk_zdr}` (in m^-1).
+    """
+    env = grid.get_temporal_field()
+    env_abs2 = xp.abs(env**2)
+    if dim == "rt":  
+        phi_envelop_abs = xp.unwrap(xp.angle(env), axis=1)
+        pphi_pr = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+        pphi_pr2 = xp.gradient(pphi_pr, grid.dx[0], axis=0)
+        pfc_r = xp.average(pphi_pr2, weights=env_abs2) / k0
+        return pfc_r
+    else:
+        phi_envelop_abs = xp.unwrap(xp.angle(env), axis=2)
+        pphi_px = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+        pphi_py = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1)
+        pphi_px2 = xp.gradient(pphi_px, grid.dx[0], axis=0)
+        pphi_py2 = xp.gradient(pphi_py, grid.dx[1], axis=1)
+        pfc_x = xp.average(pphi_px2, weights=env_abs2) / k0
+        pfc_y = xp.average(pphi_py2, weights=env_abs2) / k0
+        return [pfc_x, pfc_y]
+
 
 def get_propation_angle(dim, grid, k0):
     r"""
@@ -1304,11 +1352,13 @@ def get_propation_angle(dim, grid, k0):
     env = grid.get_temporal_field()
     env_abs2 = xp.abs(env**2)
     phi_envelop_abs = xp.unwrap(xp.angle(env), axis=2)
-    pphi_px = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1)
-    pphi_py = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+    pphi_px = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0)
+    pphi_py = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1)
     angle_x = xp.average(pphi_px, weights=env_abs2) / k0
     angle_y = xp.average(pphi_py, weights=env_abs2) / k0
     return [angle_x, angle_y]
+
+
 
 
 def get_spectral_phase(grid, dim, omega0, method="sum", ordering="zero_center"):
