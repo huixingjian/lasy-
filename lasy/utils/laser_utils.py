@@ -1233,22 +1233,22 @@ def get_beta(dim, grid, k0, order=1):
     assert dim == "xyt", "No angular chirp for axis-symmetric dimension."
     k0 = laser.profile.omega0 / c
     env_spec, spectral_axis = grid.get_spectral_field()
-    env_spec_abs2 = np.abs(env_spec**2)
+    env_spec_abs2 = xp.abs(env_spec**2)
     # Get the spectral axis
     omega = spectral_axis + k0 * c
     # Calculate angular dispersion beta
-    phi_envelop_abs = np.unwrap(
-        np.array(np.arctan2(env_spec.imag, env_spec.real)), axis=2
+    phi_envelop_abs = xp.unwrap(
+        xp.array(xp.arctan2(env_spec.imag, env_spec.real)), axis=2
     )
-    angle_x = np.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
-    angle_y = np.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
-    derivative_x_beta = np.gradient(angle_x, omega, axis=2)
-    derivative_y_beta = np.gradient(angle_y, omega, axis=2)
+    angle_x = xp.gradient(phi_envelop_abs, grid.dx[0], axis=0) / k0
+    angle_y = xp.gradient(phi_envelop_abs, grid.dx[1], axis=1) / k0
+    derivative_x_beta = xp.gradient(angle_x, omega, axis=2)
+    derivative_y_beta = xp.gradient(angle_y, omega, axis=2)
     for i in range(order - 1):
-        derivative_x_beta = np.gradient(derivative_x_beta, omega, axis=2)
-        derivative_y_beta = np.gradient(derivative_y_beta, omega, axis=2)
-    beta_x = np.average(derivative_x_beta, weights=env_spec_abs2)
-    beta_y = np.average(derivative_y_beta, weights=env_spec_abs2)
+        derivative_x_beta = xp.gradient(derivative_x_beta, omega, axis=2)
+        derivative_y_beta = xp.gradient(derivative_y_beta, omega, axis=2)
+    beta_x = xp.average(derivative_x_beta, weights=env_spec_abs2)
+    beta_y = xp.average(derivative_y_beta, weights=env_spec_abs2)
     return [beta_x, beta_y]
 
 
