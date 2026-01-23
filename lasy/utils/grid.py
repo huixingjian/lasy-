@@ -143,11 +143,11 @@ class Grid:
         """
         assert is_envelope in [True, False]
         if is_envelope:
-            self.dtype = "complex64"
+            self.dtype = xp.dtype(xp.complex64)
         else:
-            self.dtype = "float32"
+            self.dtype = xp.dtype(xp.float32)
         if hasattr(self, "temporal_field"):
-            self.temporal_field = self.temporal_field.astype(dtype=self.dtype)
+            self.temporal_field = xp.zeros(self.shape, dtype=self.dtype)
         self.is_envelope = is_envelope
 
     def set_temporal_field(self, field):
