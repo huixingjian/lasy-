@@ -128,7 +128,7 @@ class Grid:
         self.set_is_envelope(is_envelope)
         self.temporal_field = xp.zeros(self.shape, dtype=self.dtype)
         self.temporal_field_valid = False
-        self.spectral_field = xp.zeros(self.shape, dtype="complex128")
+        self.spectral_field = xp.zeros(self.shape, dtype=self.dtype)
         self.spectral_field_valid = False
         self.position = position
 
