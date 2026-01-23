@@ -46,7 +46,7 @@ class SuperGaussianTransverseProfile(TransverseProfile):
             This array has the same shape as the arrays x, y
         """
         p = self.n_order * 0.5
-        
+        w0_2 = (self.w0) * (self.w0)
         # allocate output (or reuse a preallocated buffer)
         envelope = xp.empty_like(x, dtype=x.dtype)          # float32 if x is float32
         
