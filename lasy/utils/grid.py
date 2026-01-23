@@ -101,7 +101,7 @@ class Grid:
         self.axes = []
         self.dx = []
         for i in range(ndims):
-            self.axes.append(xp.linspace(lo[i], hi[i], npoints[i]))
+            self.axes.append(xp.linspace(lo[i], hi[i], npoints[i]), dtype=xp.float32)
             if len(self.axes[i]) > 1:
                 self.dx.append(self.axes[i][1] - self.axes[i][0])
             else:
