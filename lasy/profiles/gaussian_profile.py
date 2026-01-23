@@ -172,60 +172,50 @@ class GaussianProfile(Profile):
             Contains the value of the longitudinal envelope at the
             specified points. This array has the same shape as the array t.
         """
-        c64 = xp.complex64
-        f32 = xp.float32
-        j   = c64(1j)
-        
-        # (optional but safe) cast scalar params once
-        tau   = f32(self.tau)
-        w0    = f32(self.w0)
-        k0    = f32(self.k0)
-        z_foc = f32(self.z_foc)
-        
-        inv_tau2 = tau ** f32(-2.0)
-        
-        inv_complex_waist_2 = c64(1.0) / (
-            w0**2 * (c64(1.0) + (c64(2.0) * j) * z_foc / (k0 * w0**2))
+        inv_tau2 = self.tau ** (-2)
+        inv_complex_waist_2 = 1.0 / (
+            self.w0**2 * (1.0 + 2.0j * self.z_foc / (self.k0 * self.w0**2))
         )
-        
-        # keep the real scalars in f32; keep the whole expression in complex64 via inv_complex_waist_2 and j
-        dz = f32(-self.zeta) + f32(self.beta) * z_foc
         stretch_factor = (
-            c64(1.0)
-            + f32(4.0) * dz * inv_tau2 * dz * inv_complex_waist_2
-            + (f32(2.0) * j) * (f32(-self.phi2) - f32(self.beta)**2 * k0 * z_foc) * inv_tau2
+            1
+            + 4.0
+            * (-self.zeta + self.beta * self.z_foc)
+            * inv_tau2
+            * (-self.zeta + self.beta * self.z_foc)
+            * inv_complex_waist_2
+            + 2.0j * (-self.phi2 - self.beta**2 * self.k0 * self.z_foc) * inv_tau2
         )
-        
-        # precompute the projection term once (also helps performance)
-        ct = xp.cos(f32(self.stc_theta))
-        st = xp.sin(f32(self.stc_theta))
-        proj = x * ct + y * st
-        
         stc_exponent = (
-            c64(1.0) / stretch_factor
+            1.0
+            / stretch_factor
             * inv_tau2
             * (
                 t
-                - f32(self.t_peak)
-                - f32(self.beta) * k0 * proj
-                - (f32(2.0) * j) * proj * (f32(-self.zeta) - f32(self.beta) * z_foc) * inv_complex_waist_2
+                - self.t_peak
+                - self.beta
+                * self.k0
+                * (x * xp.cos(self.stc_theta) + y * xp.sin(self.stc_theta))
+                - 2.0j
+                * (x * xp.cos(self.stc_theta) + y * xp.sin(self.stc_theta))
+                * (-self.zeta - self.beta * self.z_foc)
+                * inv_complex_waist_2
             )
-            ** f32(2.0)
+            ** 2
         )
-        
         # Term for wavefront curvature + Gouy phase
-        diffract_factor = c64(1.0) - j * f32(self.z_foc_over_zr)
-        
+        diffract_factor = 1.0 - 1j * self.z_foc_over_zr
         # Calculate the argument of the complex exponential
-        exp_argument = -((x - f32(self.x0)) ** f32(2.0) + (y - f32(self.y0)) ** f32(2.0)) / (
-            w0**2 * diffract_factor
+        exp_argument = -((x - self.x0) ** 2 + (y - self.y0) ** 2) / (
+            self.w0**2 * diffract_factor
         )
-        
         # Get the profile
-        envelope = xp.exp(
-            -stc_exponent
-            + exp_argument
-            + j * f32(self.cep_phase + self.omega0 * self.t_peak)
-        ) / diffract_factor
+        envelope = (
+            xp.exp(
+                -stc_exponent
+                + exp_argument
+                + 1.0j * (self.cep_phase + self.omega0 * self.t_peak)
+            )
+            / diffract_factor
+        )
 
         return envelope
