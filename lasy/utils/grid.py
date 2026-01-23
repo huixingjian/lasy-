@@ -143,9 +143,9 @@ class Grid:
         """
         assert is_envelope in [True, False]
         if is_envelope:
-            self.dtype = "complex128"
+            self.dtype = "complex64"
         else:
-            self.dtype = "float64"
+            self.dtype = "float32"
         if hasattr(self, "temporal_field"):
             self.temporal_field = self.temporal_field.astype(dtype=self.dtype)
         self.is_envelope = is_envelope
