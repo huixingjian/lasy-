@@ -61,7 +61,7 @@ class Profile(object):
         """
         # The base class only defines dummy fields
         # (This should be replaced by any class that inherits from this one.)
-        return xp.zeros_like(x, dtype="complex64")
+        return xp.zeros_like(x, dtype="complex128")
 
     def __add__(self, other):
         """Return the sum of two profiles."""
