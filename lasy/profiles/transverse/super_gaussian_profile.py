@@ -45,6 +45,17 @@ class SuperGaussianTransverseProfile(TransverseProfile):
             Contains the value of the envelope at the specified points
             This array has the same shape as the arrays x, y
         """
-        envelope = xp.exp(-xp.power((x**2 + y**2) / self.w0**2, self.n_order / 2))
-
+        p = self.n_order * 0.5
+        
+        # allocate output (or reuse a preallocated buffer)
+        envelope = xp.empty_like(x, dtype=x.dtype)          # float32 if x is float32
+        
+        xp.multiply(x, x, out=envelope)                     # envelope = x*x
+        tmp = xp.empty_like(y)                              # one extra buffer
+        xp.multiply(y, y, out=tmp)                          # tmp = y*y
+        xp.add(envelope, tmp, out=envelope)                 # envelope = x^2 + y^2
+        xp.divide(envelope, w0_2, out=envelope)             # envelope /= w0^2
+        xp.power(envelope, p, out=envelope)                 # envelope = ( ... )^p
+        xp.negative(envelope, out=envelope)                 # envelope = -envelope
+        xp.exp(envelope, out=envelope)                      # envelope = exp(envelope)
         return envelope
