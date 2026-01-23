@@ -6,7 +6,6 @@ from .fft_wrapper import fft, frequency_axis
 
 time_axis_indx = -1
 
-
 class Grid:
     """
     Store the envelope in temporal and spectral space and corresponding metadata.
