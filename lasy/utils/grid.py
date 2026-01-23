@@ -128,7 +128,7 @@ class Grid:
         self.set_is_envelope(is_envelope)
         self.temporal_field = xp.zeros(self.shape, dtype=self.dtype)
         self.temporal_field_valid = False
-        self.spectral_field = xp.zeros(self.shape, dtype=self.dtype)
+        self.spectral_field = xp.zeros(self.shape, dtype="complex128")
         self.spectral_field_valid = False
         self.position = position
 
@@ -143,11 +143,11 @@ class Grid:
         """
         assert is_envelope in [True, False]
         if is_envelope:
-            self.dtype = xp.dtype(xp.complex64)
+            self.dtype = "complex128"
         else:
-            self.dtype = xp.dtype(xp.float32)
+            self.dtype = "float64"
         if hasattr(self, "temporal_field"):
-            self.temporal_field = xp.zeros(self.shape, dtype=self.dtype)
+            self.temporal_field = self.temporal_field.astype(dtype=self.dtype)
         self.is_envelope = is_envelope
 
     def set_temporal_field(self, field):
@@ -175,7 +175,7 @@ class Grid:
             The spectral field.
         """
         assert field.shape == self.spectral_field.shape
-        assert field.dtype == "complex64"
+        assert field.dtype == "complex128"
         self.spectral_field[:, :, :] = to_gpu(field)
         self.spectral_field_valid = True
         self.temporal_field_valid = False  # Invalidates the temporal field
