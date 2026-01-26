@@ -1,7 +1,18 @@
 from lasy.backend import xp
 
 from .optical_element import OpticalElement
+# Define symbol regardless, then overwrite if cupy
+_exp_i_phase_fused = None
 
+if xp.__name__ == "cupy":
+    import cupy as cp
+
+    @cp.fuse()
+    def _exp_i_phase_fused(omega, omega0, delay, gdd, tod, fod):
+        dw = omega - omega0
+        phase = (((fod/24.0)*dw + (tod/6.0))*dw + (gdd/2.0))*dw + delay
+        phase = phase * dw
+        return cp.exp(1j * phase)
 
 class PolynomialSpectralPhase(OpticalElement):
     r"""
@@ -63,11 +74,18 @@ class PolynomialSpectralPhase(OpticalElement):
             Contains the value of the multiplier at the specified points.
             This array has the same shape as the array omega.
         """
-        spectral_phase = (
-            self.delay * (omega - self.omega0)
-            + self.gdd / 2 * (omega - self.omega0) ** 2
-            + self.tod / 6 * (omega - self.omega0) ** 3
-            + self.fod / 24 * (omega - self.omega0) ** 4
-        )
-
-        return xp.exp(1j * spectral_phase)
+        if xp.__name__ == "cupy":
+            dtype = omega.dtype
+            return _exp_i_phase_fused(
+                omega,
+                dtype.type(self.omega0),
+                dtype.type(self.delay),
+                dtype.type(self.gdd),
+                dtype.type(self.tod),
+                dtype.type(self.fod),
+                )    
+        else:
+               dw = omega - self.omega0
+               phase = (((self.fod/24.0)*dw + (self.tod/6.0))*dw + (self.gdd/2.0))*dw + self.delay
+               phase = phase * dw
+               return xp.exp(1j * phase)
