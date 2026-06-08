@@ -62,6 +62,7 @@ class FromArrayProfile(Profile):
             self.field_interp = RegularGridInterpolator(
                 (axes["x"], axes["y"], axes["t"]),
                 self.array,
+                method = cubic，
                 bounds_error=False,
                 fill_value=0.0 + 0.0j,
             )
