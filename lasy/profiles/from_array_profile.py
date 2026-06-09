@@ -53,7 +53,16 @@ class FromArrayProfile(Profile):
         methods may improve accuracy for smooth data.
     """
 
-    def __init__(self, wavelength, pol, array, dim, axes, axes_order=["x", "y", "t"], interp_method = 'linear'):
+    def __init__(
+        self,
+        wavelength,
+        pol,
+        array,
+        dim,
+        axes,
+        axes_order=["x", "y", "t"],
+        interp_method="linear",
+    ):
         super().__init__(wavelength, pol)
 
         assert dim in ["xyt", "rt"]
@@ -68,7 +77,7 @@ class FromArrayProfile(Profile):
             self.field_interp = RegularGridInterpolator(
                 (axes["x"], axes["y"], axes["t"]),
                 self.array,
-                method = interp_method,
+                method=interp_method,
                 bounds_error=False,
                 fill_value=0.0 + 0.0j,
             )
@@ -103,7 +112,7 @@ class FromArrayProfile(Profile):
                         (r, axes["t"]),
                         xp.abs(self.array[imode, :, :])
                         + 1.0j * xp.unwrap(xp.angle(self.array[imode, :, :]), axis=0),
-                        method = interp_method,
+                        method=interp_method,
                         bounds_error=False,
                         fill_value=0.0,
                     )

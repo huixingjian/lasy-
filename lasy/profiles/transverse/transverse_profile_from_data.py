@@ -47,7 +47,9 @@ class TransverseProfileFromData(TransverseProfile):
         methods may improve accuracy for smooth data.
     """
 
-    def __init__(self, intensity_data, lo, hi, center_data=True, interp_method = "linear"):
+    def __init__(
+        self, intensity_data, lo, hi, center_data=True, interp_method="linear"
+    ):
         super().__init__()
 
         intensity_data = intensity_data.astype("float64")
@@ -81,7 +83,7 @@ class TransverseProfileFromData(TransverseProfile):
         self.field_interp = RegularGridInterpolator(
             (y_data, x_data),
             xp.sqrt(intensity_data),
-            method = interp_method,
+            method=interp_method,
             bounds_error=False,
             fill_value=0.0,
         )
