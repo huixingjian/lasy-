@@ -37,7 +37,7 @@ class FromOpenPMDProfile(FromArrayProfile):
         If true, print some intermediate steps.
     """
 
-    def __init__(self, file_name, envelope_name=None, iteration=None, verbose=False):
+    def __init__(self, file_name, envelope_name=None, iteration=None, verbose=False,interp_method="linear"):
         series = io.Series(file_name, io.Access.read_only)
         iterations = xp.array(series.iterations)
         if iteration is None:
@@ -122,4 +122,5 @@ class FromOpenPMDProfile(FromArrayProfile):
             dim=dim,
             axes=axes,
             axes_order=axes_order,
+            interp_method=interp_method
         )
