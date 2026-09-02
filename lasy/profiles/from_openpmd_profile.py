@@ -57,27 +57,19 @@ class FromOpenPMDProfile(FromArrayProfile):
             geometry = m.get_attribute("geometry")
             dim = "xyt" if geometry == "cartesian" else "rt"
             try:
-                # Prefer the value stored in the openPMD file
                 omg0 = float(m.get_attribute("angularFrequency"))
             
-            except (RuntimeError, KeyError):
-                # Use the manually supplied value only if the attribute is missing
+            except io.ErrorNoSuchAttribute:
                 if omega0 is None:
                     raise ValueError(
-                        "The openPMD envelope does not contain the "
-                        "'angularFrequency' attribute. Please provide omega0 manually."
+                        "'angularFrequency' is missing from the openPMD file. "
+                        "Please provide omega0 manually in rad/s."
                     )
             
                 omg0 = float(omega0)
             
                 if omg0 <= 0:
-                    raise ValueError("omega0 must be positive and given in rad/s.")
-            
-                if verbose:
-                    print(
-                        "The 'angularFrequency' attribute is missing. "
-                        f"Using manually supplied omega0 = {omg0:.6e} rad/s."
-                    )
+                    raise ValueError("omega0 must be positive.")
             position = m.grid_global_offset[0] * c
             try:
                 envelopeField = m.get_attribute("envelopeField")
