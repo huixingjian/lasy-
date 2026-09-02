@@ -37,7 +37,7 @@ class FromOpenPMDProfile(FromArrayProfile):
         If true, print some intermediate steps.
     """
 
-    def __init__(self, file_name, envelope_name=None, iteration=None, verbose=False):
+    def __init__(self, file_name, envelope_name=None, iteration=None, verbose=False, omega0 = None):
         series = io.Series(file_name, io.Access.read_only)
         iterations = xp.array(series.iterations)
         if iteration is None:
@@ -56,7 +56,10 @@ class FromOpenPMDProfile(FromArrayProfile):
             m = it.meshes[envelope_name]
             geometry = m.get_attribute("geometry")
             dim = "xyt" if geometry == "cartesian" else "rt"
-            omg0 = m.get_attribute("angularFrequency")
+            if omega0 == None :
+                omg0 = m.get_attribute("angularFrequency")
+            else:
+                omg0 = omega0
             position = m.grid_global_offset[0] * c
             try:
                 envelopeField = m.get_attribute("envelopeField")
