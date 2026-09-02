@@ -35,6 +35,9 @@ class FromOpenPMDProfile(FromArrayProfile):
 
     verbose : bool (optional)
         If true, print some intermediate steps.
+
+    omega0 : float (optional)
+        Set the central frequency for the envelope construction. Necessary when "angularFrequency" is not detected in the openpmd file.
     """
 
     def __init__(self, file_name, envelope_name=None, iteration=None, verbose=False, omega0 = None):
