@@ -113,7 +113,6 @@ class FromArrayProfile(Profile):
                         xp.abs(self.array[imode, :, :])
                         + 1.0j * xp.unwrap(xp.angle(self.array[imode, :, :]), axis=0),
                         method=interp_method,
-                        self.array[imode, :, :],
                         bounds_error=False,
                         fill_value=0.0,
                     )
